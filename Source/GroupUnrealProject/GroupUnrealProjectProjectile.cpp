@@ -3,6 +3,8 @@
 #include "GroupUnrealProjectProjectile.h"
 #include "GameFramework/ProjectileMovementComponent.h"
 #include "Components/SphereComponent.h"
+#include "DamagableInterface.h"
+#include "Engine.h"
 
 AGroupUnrealProjectProjectile::AGroupUnrealProjectProjectile() 
 {
@@ -39,5 +41,12 @@ void AGroupUnrealProjectProjectile::OnHit(UPrimitiveComponent* HitComp, AActor* 
 		OtherComp->AddImpulseAtLocation(GetVelocity() * 100.0f, GetActorLocation());
 
 		Destroy();
+	}
+	if (Cast<IDamagableInterface>(OtherActor))
+	{
+		IDamagableInterface* tempActor = Cast<IDamagableInterface>(OtherActor);
+
+		tempActor->ApplyDamage_Implementation(5.0f);
+		GEngine->AddOnScreenDebugMessage(-1, 5, FColor::Red, "HejFan");
 	}
 }
