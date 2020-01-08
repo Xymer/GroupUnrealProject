@@ -19,6 +19,8 @@ class GROUPUNREALPROJECT_API AWeaponBase : public AActor
 
 public:
 
+	UPROPERTY(VisibleDefaultsOnly, Category = Mesh)
+		USkeletalMeshComponent* weaponMesh;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Weapon Properties")
 		float damage = 0.0f;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Weapon Properties")
