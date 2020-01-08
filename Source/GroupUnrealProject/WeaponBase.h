@@ -5,7 +5,7 @@
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
 #include "FireMode.h"
-
+#include "Math/Vector.h"
 
 #include "WeaponBase.generated.h"
 
@@ -17,7 +17,6 @@ class GROUPUNREALPROJECT_API AWeaponBase : public AActor
 
 	GENERATED_BODY()
 
-	
 public:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Weapon Properties")
@@ -26,6 +25,11 @@ public:
 		int magazineSize = 0;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Weapon Properties")
 		TEnumAsByte<EFireMode> fireMode = EFireMode::semiAutomatic;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Weapon Properties")
+		FVector muzzlePoint;
+
+
 
 	AWeaponBase();
 
