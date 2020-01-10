@@ -6,7 +6,8 @@
 #include "GameFramework/Actor.h"
 #include "FireMode.h"
 #include "Math/Vector.h"
-
+#include "AmmoDataTable.h"
+#include "Magazine.h"
 #include "WeaponBase.generated.h"
 
 
@@ -14,23 +15,23 @@ UCLASS()
 
 class GROUPUNREALPROJECT_API AWeaponBase : public AActor
 {
-
+	
 	GENERATED_BODY()
 
 public:
 
 	UPROPERTY(VisibleDefaultsOnly, Category = Mesh)
 		USkeletalMeshComponent* weaponMesh;
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Weapon Properties")
-		float damage = 0.0f;
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Weapon Properties")
-		int magazineSize = 0;
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Weapon Properties")
+		UAmmoDataTable* currentAmmoType;
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Weapon Properties")
+		FMagazine currentMagazine;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Weapon Properties")
 		TEnumAsByte<EFireMode> fireMode = EFireMode::semiAutomatic;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Weapon Properties")
 		FVector muzzlePoint;
-
+	
 
 
 	AWeaponBase();

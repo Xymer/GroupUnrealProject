@@ -70,11 +70,6 @@ void AGroupUnrealProjectCharacter::SetupPlayerInputComponent(class UInputCompone
 	// Bind fire event
 	PlayerInputComponent->BindAction("Fire", IE_Pressed, this, &AGroupUnrealProjectCharacter::OnFire);
 
-	// Enable touchscreen input
-	EnableTouchscreenMovement(PlayerInputComponent);
-
-	
-
 	// Bind movement events
 	PlayerInputComponent->BindAxis("MoveForward", this, &AGroupUnrealProjectCharacter::MoveForward);
 	PlayerInputComponent->BindAxis("MoveRight", this, &AGroupUnrealProjectCharacter::MoveRight);

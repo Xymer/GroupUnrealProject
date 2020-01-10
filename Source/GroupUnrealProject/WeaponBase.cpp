@@ -10,19 +10,18 @@ AWeaponBase::AWeaponBase()
 {
  	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
-	weaponMesh = CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("Weapon"));
+	weaponMesh = CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("WeaponSkeleton"));
+	if (weaponMesh != nullptr)
+	{
+		muzzlePoint = weaponMesh->GetSocketLocation("Muzzle");
+	}
 }
 
 // Called when the game starts or when spawned
 void AWeaponBase::BeginPlay()
 {
 	Super::BeginPlay();
-	if (weaponMesh != nullptr)
-	{
-
-	muzzlePoint = weaponMesh->GetSocketLocation("Muzzle");
-	GEngine->AddOnScreenDebugMessage(-1, 20, FColor::Red, muzzlePoint.ToString());
-	}
+	
 	
 }
 
