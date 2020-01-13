@@ -8,20 +8,26 @@
 // Sets default values
 AWeaponBase::AWeaponBase()
 {
- 	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
+	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
-	weaponMesh = CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("WeaponSkeleton"));
-	if (weaponMesh != nullptr)
-	{
-		muzzlePoint = weaponMesh->GetSocketLocation("Muzzle");
-	}
+	WeaponMesh = CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("WeaponSkeleton"));
+
 }
+
+
 
 // Called when the game starts or when spawned
 void AWeaponBase::BeginPlay()
 {
 	Super::BeginPlay();
-	
+	if (WeaponMesh != nullptr)
+	{
+		MuzzlePoint = WeaponMesh->GetSocketLocation("Muzzle");
+	}
+	if ( AvailableMagazines.Num() <= TotalMags)
+	{
+	CurrentMagazine = NewObject<UMagazineBase>(GetTransientPackage(), *AvailableMagazines[1]);
+	}
 	
 }
 
@@ -29,7 +35,6 @@ void AWeaponBase::BeginPlay()
 void AWeaponBase::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
-
 }
 
 void AWeaponBase::ShootWeapon()
