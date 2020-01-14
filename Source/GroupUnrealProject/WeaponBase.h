@@ -7,10 +7,8 @@
 #include "FireMode.h"
 #include "Math/Vector.h"
 #include "MagazineBase.h"
-#include "Ammo.h"
+#include "BulletBase.h"
 #include "Templates\SubclassOf.h"
-#include "UObject\SoftObjectPtr.h"
-#include "UObject/ObjectMacros.h"
 #include "WeaponBase.generated.h"
 
 
@@ -21,26 +19,35 @@ class GROUPUNREALPROJECT_API AWeaponBase : public AActor
 	
 	GENERATED_BODY()
 private:	
-	int TotalMags = 2;
+	int EquippedBullets = 0;
+	int EquippedMagazine = 0;
+	int CurrentSelectedSkin = 0;
+	float TestTimer = 5;
 
 public:
 	
 	/*Skeletal mesh need Muzzle bone*/
 	UPROPERTY(VisibleDefaultsOnly, Category = Mesh)
 		USkeletalMeshComponent* WeaponMesh;
-
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Skin")
+		TArray<UMaterialInterface*> Skin;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Skin")
+		UMaterialInterface* CurrentSkin;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Ammo")
 		TArray <TSubclassOf<UMagazineBase>> AvailableMagazines;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Ammo")
 		TArray <TSubclassOf<UBulletBase>> AvailableBullets;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Ammo")
-		TArray<FAmmo> Ammo;
+		UMagazineBase* CurrentMagazine;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Ammo")
+		UBulletBase* CurrentBullet;
+	UPROPERTY(VisibleAnywhere,BlueprintReadOnly,Category = "Ammo")
+		int CurrentUsedMagazine;
+
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Weapon Properties")
 		TEnumAsByte<EFireMode> FireMode = EFireMode::semiAutomatic;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Weapon Properties")
 		FVector MuzzlePoint;
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Ammo")
-		UMagazineBase* CurrentMagazine;
 	AWeaponBase();
 
 protected:

@@ -24,10 +24,43 @@ void AWeaponBase::BeginPlay()
 	{
 		MuzzlePoint = WeaponMesh->GetSocketLocation("Muzzle");
 	}
-	if ( AvailableMagazines.Num() <= TotalMags)
+
+	//TODO: Make a function with a message and input to this
+	if (EquippedMagazine > AvailableMagazines.Num())
 	{
-	CurrentMagazine = NewObject<UMagazineBase>(GetTransientPackage(), *AvailableMagazines[1]);
+		EquippedMagazine = 0;
+		CurrentMagazine = NewObject<UMagazineBase>(GetTransientPackage(), *AvailableMagazines[EquippedMagazine]);
+		CurrentUsedMagazine = CurrentMagazine->magazineSize;
 	}
+	else if (EquippedMagazine == AvailableMagazines.Num())
+	{
+		CurrentMagazine = NewObject<UMagazineBase>(GetTransientPackage(), *AvailableMagazines[EquippedMagazine]);
+		CurrentUsedMagazine = CurrentMagazine->magazineSize;
+	}
+	else if (EquippedMagazine < AvailableMagazines.Num())
+	{
+		EquippedMagazine++;
+		CurrentMagazine = NewObject<UMagazineBase>(GetTransientPackage(), *AvailableMagazines[EquippedMagazine]);
+		CurrentUsedMagazine = CurrentMagazine->magazineSize;
+	}
+	//TODO: Make a function with a message and input to this
+	if (EquippedBullets > AvailableBullets.Num())
+	{
+		EquippedBullets = 0;
+		CurrentBullet = NewObject<UBulletBase>(GetTransientPackage(), *AvailableBullets[EquippedBullets]);
+	}
+	else if (EquippedBullets == AvailableBullets.Num())
+	{
+		CurrentBullet = NewObject<UBulletBase>(GetTransientPackage(), *AvailableBullets[EquippedBullets]);
+	}
+	else if(EquippedBullets < AvailableBullets.Num())
+	{
+		EquippedBullets++;
+		CurrentBullet = NewObject<UBulletBase>(GetTransientPackage(), *AvailableBullets[EquippedBullets]);
+	}
+
+	
+	
 	
 }
 
@@ -35,6 +68,25 @@ void AWeaponBase::BeginPlay()
 void AWeaponBase::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
+	TestTimer -= DeltaTime;
+	//TODO: Add function to be able to switch skin inside game
+	if (TestTimer <= 0)
+	{
+		if (CurrentSelectedSkin < Skin.Num()-1)
+		{
+			CurrentSelectedSkin++;
+			CurrentSkin = Skin[CurrentSelectedSkin];
+			WeaponMesh->SetMaterial(0, CurrentSkin);
+		}
+		else
+		{
+			CurrentSelectedSkin = 0;
+			CurrentSkin = Skin[CurrentSelectedSkin];
+			WeaponMesh->SetMaterial(0, CurrentSkin);
+		}
+
+		TestTimer = 5.0f;
+	}
 }
 
 void AWeaponBase::ShootWeapon()
