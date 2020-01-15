@@ -5,6 +5,7 @@
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
 #include "FireMode.h"
+#include "Components/BoxComponent.h"
 #include "Math/Vector.h"
 #include "MagazineBase.h"
 #include "BulletBase.h"
@@ -27,8 +28,10 @@ private:
 public:
 
 	/*Skeletal mesh need Muzzle bone*/
-	UPROPERTY(VisibleDefaultsOnly, Category = Mesh)
+	UPROPERTY(VisibleAnywhere, Category = "Mesh")
 		USkeletalMeshComponent* WeaponMesh;
+	UPROPERTY(EditAnywhere,BlueprintReadWrite, Category = "Trigger")
+		class UBoxComponent* TriggerBox;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Skin")
 		TArray<UMaterialInterface*> Skin;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Skin")
@@ -57,19 +60,20 @@ protected:
 public:
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
-	UFUNCTION(BlueprintCallable, BlueprintAuthorityOnly)
+	UFUNCTION(BlueprintCallable, BlueprintAuthorityOnly, Category ="Weapon")
 		void ShootWeapon();
 		void ShootWeapon_Implementation();
-	UFUNCTION(BlueprintCallable, BlueprintAuthorityOnly)
+	UFUNCTION(BlueprintCallable, BlueprintAuthorityOnly, Category = "Weapon")
 		void ReloadWeapon();
 		void ReloadWeapon_Implementation();
-	UFUNCTION(BlueprintCallable, BlueprintAuthorityOnly)
+	UFUNCTION(BlueprintCallable, BlueprintAuthorityOnly, Category = "Weapon")
 		void SwitchMagazine();
 		void SwitchMagazine_Implementation();
-	UFUNCTION(BlueprintCallable, BlueprintAuthorityOnly)
+	UFUNCTION(BlueprintCallable, BlueprintAuthorityOnly, Category = "Weapon")
 		void SwitchBullets();
 		void SwitchBullets_Implementation();
-	UFUNCTION(BlueprintCallable, BlueprintAuthorityOnly)
+	UFUNCTION(BlueprintCallable, BlueprintAuthorityOnly, Category = "Weapon")
 		void SwitchSkin();
 		void SwitchSkin_Implementation();
+		
 };

@@ -2,15 +2,25 @@
 
 
 #include "WeaponBase.h"
+#include "Components/BoxComponent.h"
 #include <Components/SkeletalMeshComponent.h>
 #include <Engine/Engine.h>
 
 // Sets default values
 AWeaponBase::AWeaponBase()
 {
+	
 	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
+	
 	WeaponMesh = CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("WeaponSkeleton"));
+	WeaponMesh->SetupAttachment(RootComponent);
+
+	TriggerBox = CreateDefaultSubobject<UBoxComponent>(TEXT("TriggerBox"));
+	TriggerBox->SetupAttachment(RootComponent);
+	TriggerBox->InitBoxExtent(FVector(25.0f, 25.0f, 25.0f));
+	TriggerBox->SetCollisionProfileName(TEXT("Trigger"));
+	
 }
 
 
@@ -18,6 +28,10 @@ AWeaponBase::AWeaponBase()
 // Called when the game starts or when spawned
 void AWeaponBase::BeginPlay()
 {
+	if (!this->ActorHasTag("Weapon"))
+	{
+		this->Tags.Add("Weapon");
+	}
 	Super::BeginPlay();
 	if (WeaponMesh != nullptr)
 	{
@@ -46,6 +60,7 @@ void AWeaponBase::ShootWeapon()
 void AWeaponBase::ReloadWeapon()
 {
 }
+
 
 void AWeaponBase::SwitchMagazine()
 {
@@ -94,4 +109,6 @@ void AWeaponBase::SwitchSkin()
 		WeaponMesh->SetMaterial(0, CurrentSkin);
 	}
 }
+
+
 

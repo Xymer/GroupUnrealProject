@@ -9,9 +9,7 @@
 #include "GameFramework/InputSettings.h"
 #include "HeadMountedDisplayFunctionLibrary.h"
 #include "Kismet/GameplayStatics.h"
-#include "MotionControllerComponent.h"
-#include "XRMotionControllerBase.h" // for FXRMotionControllerBase::RightHandSourceId
-
+#include "WeaponBase.h"
 DEFINE_LOG_CATEGORY_STATIC(LogFPChar, Warning, All);
 
 //////////////////////////////////////////////////////////////////////////
@@ -21,7 +19,10 @@ AGroupUnrealProjectCharacter::AGroupUnrealProjectCharacter()
 {
 	// Set size for collision capsule
 	GetCapsuleComponent()->InitCapsuleSize(55.f, 96.0f);
-
+	
+	WeaponPickupBox = CreateDefaultSubobject<UBoxComponent>(TEXT("Weapon Pickup Box"));
+	WeaponPickupBox->InitBoxExtent(FVector(60.0f, 60.0f,60.0f));
+	WeaponPickupBox->SetupAttachment(GetCapsuleComponent());
 	// set our turn rates for input
 	BaseTurnRate = 45.f;
 	BaseLookUpRate = 45.f;
@@ -45,9 +46,10 @@ AGroupUnrealProjectCharacter::AGroupUnrealProjectCharacter()
 
 void AGroupUnrealProjectCharacter::BeginPlay()
 {
+	
 	// Call the base class  
 	Super::BeginPlay();
-
+	WeaponPickupBox->OnComponentBeginOverlap.AddDynamic(this, &AGroupUnrealProjectCharacter::OnBeginOverlap);
 	Mesh1P->SetHiddenInGame(false, true);
 	
 }
@@ -90,12 +92,30 @@ void AGroupUnrealProjectCharacter::SetupPlayerInputComponent(class UInputCompone
 
 
 
+void AGroupUnrealProjectCharacter::OnBeginOverlap(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp,
+	int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
+{
+	if (OtherActor && (OtherActor != this) && OtherComp)
+	{
+		if (OtherActor->Tags.Contains("Weapon") && !CurrentWeapon)
+		{
+			CurrentWeapon = Cast<AWeaponBase>(OtherActor);
+			CurrentWeapon->WeaponMesh->SetSimulatePhysics(false);
+			CurrentWeapon->WeaponMesh->SetCollisionProfileName("NoCollision");
+			
+			OtherActor->AttachToComponent(Mesh1P, FAttachmentTransformRules::SnapToTargetIncludingScale, "GripPoint");
+			OtherActor->SetActorTransform(Mesh1P->GetSocketTransform("GripPoint"));
+			CurrentWeapon->SetOwner(this);
+
+		}
+	}
+}
+
 #pragma endregion
 
 
 void AGroupUnrealProjectCharacter::OnFire()
 {
-	GEngine->AddOnScreenDebugMessage(-1, 5, FColor::Red, "Bajs");
 }
 
 void AGroupUnrealProjectCharacter::MoveForward(float Value)
