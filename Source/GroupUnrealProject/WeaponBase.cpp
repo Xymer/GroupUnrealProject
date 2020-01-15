@@ -11,7 +11,6 @@ AWeaponBase::AWeaponBase()
 	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
 	WeaponMesh = CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("WeaponSkeleton"));
-
 }
 
 
@@ -25,43 +24,10 @@ void AWeaponBase::BeginPlay()
 		MuzzlePoint = WeaponMesh->GetSocketLocation("Muzzle");
 	}
 
-	//TODO: Make a function with a message and input to this
-	if (EquippedMagazine > AvailableMagazines.Num())
-	{
-		EquippedMagazine = 0;
-		CurrentMagazine = NewObject<UMagazineBase>(GetTransientPackage(), *AvailableMagazines[EquippedMagazine]);
-		CurrentUsedMagazine = CurrentMagazine->magazineSize;
-	}
-	else if (EquippedMagazine == AvailableMagazines.Num())
-	{
-		CurrentMagazine = NewObject<UMagazineBase>(GetTransientPackage(), *AvailableMagazines[EquippedMagazine]);
-		CurrentUsedMagazine = CurrentMagazine->magazineSize;
-	}
-	else if (EquippedMagazine < AvailableMagazines.Num())
-	{
-		EquippedMagazine++;
-		CurrentMagazine = NewObject<UMagazineBase>(GetTransientPackage(), *AvailableMagazines[EquippedMagazine]);
-		CurrentUsedMagazine = CurrentMagazine->magazineSize;
-	}
-	//TODO: Make a function with a message and input to this
-	if (EquippedBullets > AvailableBullets.Num())
-	{
-		EquippedBullets = 0;
-		CurrentBullet = NewObject<UBulletBase>(GetTransientPackage(), *AvailableBullets[EquippedBullets]);
-	}
-	else if (EquippedBullets == AvailableBullets.Num())
-	{
-		CurrentBullet = NewObject<UBulletBase>(GetTransientPackage(), *AvailableBullets[EquippedBullets]);
-	}
-	else if(EquippedBullets < AvailableBullets.Num())
-	{
-		EquippedBullets++;
-		CurrentBullet = NewObject<UBulletBase>(GetTransientPackage(), *AvailableBullets[EquippedBullets]);
-	}
+	CurrentMagazine = NewObject<UMagazineBase>(GetTransientPackage(), *AvailableMagazines[SelectedMagazine]);
+	CurrentBullet = NewObject<UBulletBase>(GetTransientPackage(), *AvailableBullets[SelectedBullets]);
+	CurrentUsedMagazine = CurrentMagazine->magazineSize;
 
-	
-	
-	
 }
 
 // Called every frame
@@ -69,24 +35,8 @@ void AWeaponBase::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 	TestTimer -= DeltaTime;
-	//TODO: Add function to be able to switch skin inside game
-	if (TestTimer <= 0)
-	{
-		if (CurrentSelectedSkin < Skin.Num()-1)
-		{
-			CurrentSelectedSkin++;
-			CurrentSkin = Skin[CurrentSelectedSkin];
-			WeaponMesh->SetMaterial(0, CurrentSkin);
-		}
-		else
-		{
-			CurrentSelectedSkin = 0;
-			CurrentSkin = Skin[CurrentSelectedSkin];
-			WeaponMesh->SetMaterial(0, CurrentSkin);
-		}
+	
 
-		TestTimer = 5.0f;
-	}
 }
 
 void AWeaponBase::ShootWeapon()
@@ -95,5 +45,53 @@ void AWeaponBase::ShootWeapon()
 
 void AWeaponBase::ReloadWeapon()
 {
+}
+
+void AWeaponBase::SwitchMagazine()
+{
+	SelectedMagazine++;
+	if (SelectedMagazine > AvailableMagazines.Num())
+	{
+		SelectedMagazine = 0;
+		CurrentMagazine = NewObject<UMagazineBase>(GetTransientPackage(), *AvailableMagazines[SelectedMagazine]);
+		CurrentUsedMagazine = CurrentMagazine->magazineSize;
+	}
+
+	else if (SelectedMagazine < AvailableMagazines.Num())
+	{
+		CurrentMagazine = NewObject<UMagazineBase>(GetTransientPackage(), *AvailableMagazines[SelectedMagazine]);
+		CurrentUsedMagazine = CurrentMagazine->magazineSize;
+	}
+}
+
+void AWeaponBase::SwitchBullets()
+{
+	SelectedBullets++;
+	if (SelectedBullets > AvailableBullets.Num() - 1)
+	{
+		SelectedBullets = 0;
+		CurrentBullet = NewObject<UBulletBase>(GetTransientPackage(), *AvailableBullets[SelectedBullets]);
+	}
+
+	else if (SelectedBullets < AvailableBullets.Num() - 1)
+	{	
+		CurrentBullet = NewObject<UBulletBase>(GetTransientPackage(), *AvailableBullets[SelectedBullets]);
+	}
+}
+
+void AWeaponBase::SwitchSkin()
+{
+	if (CurrentSelectedSkin < Skin.Num() - 1)
+	{
+		CurrentSelectedSkin++;
+		CurrentSkin = Skin[CurrentSelectedSkin];
+		WeaponMesh->SetMaterial(0, CurrentSkin);
+	}
+	else if(CurrentSelectedSkin > Skin.Num() - 1)
+	{
+		CurrentSelectedSkin = 0;
+		CurrentSkin = Skin[CurrentSelectedSkin];
+		WeaponMesh->SetMaterial(0, CurrentSkin);
+	}
 }
 

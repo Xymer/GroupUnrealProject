@@ -16,16 +16,16 @@ UCLASS()
 
 class GROUPUNREALPROJECT_API AWeaponBase : public AActor
 {
-	
+
 	GENERATED_BODY()
-private:	
-	int EquippedBullets = 0;
-	int EquippedMagazine = 0;
+private:
+	int SelectedBullets = 0;
+	int SelectedMagazine = 0;
 	int CurrentSelectedSkin = 0;
 	float TestTimer = 5;
 
 public:
-	
+
 	/*Skeletal mesh need Muzzle bone*/
 	UPROPERTY(VisibleDefaultsOnly, Category = Mesh)
 		USkeletalMeshComponent* WeaponMesh;
@@ -41,7 +41,7 @@ public:
 		UMagazineBase* CurrentMagazine;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Ammo")
 		UBulletBase* CurrentBullet;
-	UPROPERTY(VisibleAnywhere,BlueprintReadOnly,Category = "Ammo")
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Ammo")
 		int CurrentUsedMagazine;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Weapon Properties")
@@ -57,6 +57,19 @@ protected:
 public:
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
-	virtual void ShootWeapon();
-	virtual void ReloadWeapon();
+	UFUNCTION(BlueprintCallable, BlueprintAuthorityOnly)
+		void ShootWeapon();
+		void ShootWeapon_Implementation();
+	UFUNCTION(BlueprintCallable, BlueprintAuthorityOnly)
+		void ReloadWeapon();
+		void ReloadWeapon_Implementation();
+	UFUNCTION(BlueprintCallable, BlueprintAuthorityOnly)
+		void SwitchMagazine();
+		void SwitchMagazine_Implementation();
+	UFUNCTION(BlueprintCallable, BlueprintAuthorityOnly)
+		void SwitchBullets();
+		void SwitchBullets_Implementation();
+	UFUNCTION(BlueprintCallable, BlueprintAuthorityOnly)
+		void SwitchSkin();
+		void SwitchSkin_Implementation();
 };
