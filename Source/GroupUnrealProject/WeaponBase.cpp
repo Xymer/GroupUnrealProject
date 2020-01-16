@@ -37,10 +37,13 @@ void AWeaponBase::BeginPlay()
 	{
 		MuzzlePoint = WeaponMesh->GetSocketLocation("Muzzle");
 	}
-
+	if (Skin.Num() != 0)
+	{
+		CurrentSkin = Skin[0];
+	}
 	CurrentMagazine = NewObject<UMagazineBase>(GetTransientPackage(), *AvailableMagazines[SelectedMagazine]);
 	CurrentBullet = NewObject<UBulletBase>(GetTransientPackage(), *AvailableBullets[SelectedBullets]);
-	CurrentUsedMagazine = CurrentMagazine->magazineSize;
+	CurrentUsedMagazine = CurrentMagazine->MagazineSize;
 
 }
 
@@ -69,13 +72,13 @@ void AWeaponBase::SwitchMagazine()
 	{
 		SelectedMagazine = 0;
 		CurrentMagazine = NewObject<UMagazineBase>(GetTransientPackage(), *AvailableMagazines[SelectedMagazine]);
-		CurrentUsedMagazine = CurrentMagazine->magazineSize;
+		CurrentUsedMagazine = CurrentMagazine->MagazineSize;
 	}
 
 	else if (SelectedMagazine < AvailableMagazines.Num())
 	{
 		CurrentMagazine = NewObject<UMagazineBase>(GetTransientPackage(), *AvailableMagazines[SelectedMagazine]);
-		CurrentUsedMagazine = CurrentMagazine->magazineSize;
+		CurrentUsedMagazine = CurrentMagazine->MagazineSize;
 	}
 }
 
@@ -96,9 +99,9 @@ void AWeaponBase::SwitchBullets()
 
 void AWeaponBase::SwitchSkin()
 {
-	if (CurrentSelectedSkin < Skin.Num() - 1)
+	CurrentSelectedSkin++;
+	if (CurrentSelectedSkin <= Skin.Num() -1)
 	{
-		CurrentSelectedSkin++;
 		CurrentSkin = Skin[CurrentSelectedSkin];
 		WeaponMesh->SetMaterial(0, CurrentSkin);
 	}

@@ -64,6 +64,24 @@ public:
 	UFUNCTION(BlueprintCallable)
 		void OnFire();
 
+	UFUNCTION()
+		void OnBeginOverlap(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp,
+			int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
+	UFUNCTION(BlueprintCallable, BlueprintAuthorityOnly)
+		void DropWeapon();
+		void DropWeapon_Implementation();
+
+	UFUNCTION(BlueprintCallable, BlueprintAuthorityOnly)
+		void ChangeMagazine();
+		void ChangeMagazine_Implementation();
+
+	UFUNCTION(BlueprintCallable, BlueprintAuthorityOnly)
+		void ChangeBullets();
+		void ChangeBullets_Implementation();
+
+	UFUNCTION(BlueprintCallable, BlueprintAuthorityOnly)
+		void ChangeWeaponSkin();
+		void ChangeWeaponSkin_Implementation();
 
 protected:
 	
@@ -112,9 +130,7 @@ public:
 	/** Returns FirstPersonCameraComponent subobject **/
 	FORCEINLINE class UCameraComponent* GetFirstPersonCameraComponent() const { return FirstPersonCameraComponent; }
 
-	UFUNCTION()
-		void OnBeginOverlap(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp,
-			int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
+	
 
 };
 

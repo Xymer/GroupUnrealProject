@@ -60,20 +60,20 @@ protected:
 public:
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
-	UFUNCTION(BlueprintCallable, BlueprintAuthorityOnly, Category ="Weapon")
+	UFUNCTION()
 		void ShootWeapon();
-		void ShootWeapon_Implementation();
-	UFUNCTION(BlueprintCallable, BlueprintAuthorityOnly, Category = "Weapon")
+	
+	UFUNCTION()
 		void ReloadWeapon();
-		void ReloadWeapon_Implementation();
-	UFUNCTION(BlueprintCallable, BlueprintAuthorityOnly, Category = "Weapon")
+	
+	UFUNCTION()
 		void SwitchMagazine();
-		void SwitchMagazine_Implementation();
-	UFUNCTION(BlueprintCallable, BlueprintAuthorityOnly, Category = "Weapon")
+		
+	UFUNCTION()
 		void SwitchBullets();
-		void SwitchBullets_Implementation();
-	UFUNCTION(BlueprintCallable, BlueprintAuthorityOnly, Category = "Weapon")
+	
+	UFUNCTION()
 		void SwitchSkin();
-		void SwitchSkin_Implementation();
+		
 		
 };

@@ -16,9 +16,9 @@ class  UBulletBase : public UObject
 	GENERATED_BODY()
 public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Bullet")
-		FName ammoType;
+		FName AmmoType;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Bullet")
-		float damage;
+		float BulletDamage;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Bullet")
-		float projectileSpeed;
+		float ProjectileSpeed;
 };

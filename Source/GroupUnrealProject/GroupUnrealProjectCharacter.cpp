@@ -111,11 +111,50 @@ void AGroupUnrealProjectCharacter::OnBeginOverlap(UPrimitiveComponent* Overlappe
 	}
 }
 
+void AGroupUnrealProjectCharacter::DropWeapon()
+{
+	if (CurrentWeapon)
+	{
+		CurrentWeapon->DetachRootComponentFromParent(true);
+		CurrentWeapon->WeaponMesh->SetSimulatePhysics(true);
+		CurrentWeapon->WeaponMesh->SetCollisionProfileName("PhysicsActor");
+		CurrentWeapon = nullptr;
+	}
+}
+
+void AGroupUnrealProjectCharacter::ChangeMagazine()
+{
+	if (CurrentWeapon)
+	{
+		CurrentWeapon->SwitchMagazine();
+	}
+}
+
+void AGroupUnrealProjectCharacter::ChangeBullets()
+{
+	if (CurrentWeapon)
+	{
+		CurrentWeapon->SwitchBullets();
+	}
+}
+
+void AGroupUnrealProjectCharacter::ChangeWeaponSkin()
+{
+	if (CurrentWeapon)
+	{
+		CurrentWeapon->SwitchSkin();
+	}
+}
+
 #pragma endregion
 
 
 void AGroupUnrealProjectCharacter::OnFire()
 {
+	if (CurrentWeapon)
+	{
+		CurrentWeapon->ShootWeapon();
+	}
 }
 
 void AGroupUnrealProjectCharacter::MoveForward(float Value)

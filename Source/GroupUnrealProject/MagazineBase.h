@@ -15,9 +15,9 @@ class UMagazineBase : public UObject
 	GENERATED_BODY()
 public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Magazine")
-		FName magazineType;
+		FName MagazineType;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Magazine")
-		 int magazineSize;
+		 int MagazineSize;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Magazine")
-		float reloadSpeed;
+		float ReloadSpeed;
 };
