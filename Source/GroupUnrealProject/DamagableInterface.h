@@ -16,7 +16,7 @@ class UDamagableInterface : public UInterface
 /**
  * 
  */
-class GROUPUNREALPROJECT_API IDamagableInterface
+class GROUPUNREALPROJECT_API IDamagableInterface 
 {
 	GENERATED_BODY()
 

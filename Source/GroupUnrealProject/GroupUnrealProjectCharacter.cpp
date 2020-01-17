@@ -153,8 +153,9 @@ void AGroupUnrealProjectCharacter::OnFire()
 {
 	if (CurrentWeapon)
 	{
-		CurrentWeapon->ShootWeapon();
+		 CurrentWeapon->ShootWeapon(FirstPersonCameraComponent->GetForwardVector() * CurrentWeapon->HitScanComponent->HitScanRange);
 	}
+
 }
 
 void AGroupUnrealProjectCharacter::MoveForward(float Value)

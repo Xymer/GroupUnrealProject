@@ -26,6 +26,7 @@ class AGroupUnrealProjectCharacter : public ACharacter
 	
 
 
+
 public:
 	AGroupUnrealProjectCharacter();
 
@@ -83,10 +84,9 @@ public:
 		void ChangeWeaponSkin();
 		void ChangeWeaponSkin_Implementation();
 
+
+
 protected:
-	
-	/** Fires a projectile. */
-	
 
 
 	/** Handles moving forward/backward */

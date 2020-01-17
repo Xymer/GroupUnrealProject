@@ -4,14 +4,18 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
-#include "FireMode.h"
 #include "Components/BoxComponent.h"
 #include "Math/Vector.h"
+
+
+#include "FireMode.h"
 #include "MagazineBase.h"
 #include "BulletBase.h"
+#include "HitScanComponent.h"
+
+
 #include "Templates\SubclassOf.h"
 #include "WeaponBase.generated.h"
-
 
 UCLASS()
 
@@ -23,10 +27,13 @@ private:
 	int SelectedBullets = 0;
 	int SelectedMagazine = 0;
 	int CurrentSelectedSkin = 0;
-	float TestTimer = 5;
+	EFireMode CurrentFireMode = EFireMode::SemiAutomatic;
+	FHitResult HitResult;
+	
 
 public:
-
+	class UHitScanComponent* HitScanComponent;
+	
 	/*Skeletal mesh need Muzzle bone*/
 	UPROPERTY(VisibleAnywhere, Category = "Mesh")
 		USkeletalMeshComponent* WeaponMesh;
@@ -48,7 +55,7 @@ public:
 		int CurrentUsedMagazine;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Weapon Properties")
-		TEnumAsByte<EFireMode> FireMode = EFireMode::semiAutomatic;
+		TEnumAsByte<EFireMode> FireMode = EFireMode::SemiAutomatic;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Weapon Properties")
 		FVector MuzzlePoint;
 	AWeaponBase();
@@ -61,7 +68,7 @@ public:
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 	UFUNCTION()
-		void ShootWeapon();
+		void ShootWeapon(FVector CameraForwardVector);
 	
 	UFUNCTION()
 		void ReloadWeapon();

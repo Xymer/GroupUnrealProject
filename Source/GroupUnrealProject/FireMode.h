@@ -10,8 +10,8 @@
 UENUM()
 enum EFireMode
 {
-	semiAutomatic = 0,
-	fullAuto,
-	burstFire,
-	singleAction //Launcher or sniper for example
+	SemiAutomatic = 0,
+	FullAuto,
+	BurstFire,
+	SingleAction //Launcher or sniper for example
 };
