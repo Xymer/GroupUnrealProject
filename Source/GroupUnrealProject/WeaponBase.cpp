@@ -38,10 +38,18 @@ void AWeaponBase::BeginPlay()
 	}
 	if (!HitScanComponent)
 	{
-		HitScanComponent = this->FindComponentByClass<UHitScanComponent>();
+		if (this->FindComponentByClass<UHitScanComponent>())
+		{
+			HitScanComponent = this->FindComponentByClass<UHitScanComponent>();
+		}
+		
 	}
-	if (!ProjectileComponent) {
+	if (!ProjectileComponent)
+	{
+		if (this->FindComponentByClass<UProjectileComponent>())
+		{
 		ProjectileComponent = this->FindComponentByClass<UProjectileComponent>();
+		}
 	}
 
 	if (Skin.Num() != 0)
@@ -114,6 +122,10 @@ void AWeaponBase::ShootWeapon(FVector CameraForwardVector, bool bIsFiring)
 				UE_LOG(LogTemp, Warning, TEXT("Hit %s"), *HitResult.Actor->GetName());
 			}
 		}
+	}
+	else
+	{
+
 	}
 
 	if (ProjectileComponent)

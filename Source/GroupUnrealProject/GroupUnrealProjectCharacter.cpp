@@ -159,10 +159,18 @@ void AGroupUnrealProjectCharacter::ChangeFiremode()
 
 void AGroupUnrealProjectCharacter::OnFire()
 {
-
+	float Range = 1;
+	if (CurrentWeapon)
+	{
+		if (CurrentWeapon->HitScanComponent)
+		{
+			Range = CurrentWeapon->HitScanComponent->HitScanRange;
+		}
+	}
+	
 	if (CurrentWeapon && FiringAxisValue > 0)
 	{
-		 CurrentWeapon->ShootWeapon(FirstPersonCameraComponent->GetForwardVector() * CurrentWeapon->HitScanComponent->HitScanRange,bIsFiring);
+		 CurrentWeapon->ShootWeapon(FirstPersonCameraComponent->GetForwardVector() * Range,bIsFiring);
 	}
 	if (CurrentWeapon && FiringAxisValue <= 0)
 	{

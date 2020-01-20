@@ -18,7 +18,7 @@ public:
 	// Sets default values for this component's properties
 	UHitScanComponent();
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Hit Scan")
-		float HitScanRange;
+		float HitScanRange = 5000;
 	
 
 private:
