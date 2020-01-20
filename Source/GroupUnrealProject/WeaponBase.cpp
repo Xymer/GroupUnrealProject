@@ -40,6 +40,9 @@ void AWeaponBase::BeginPlay()
 	{
 		HitScanComponent = this->FindComponentByClass<UHitScanComponent>();
 	}
+	if (!ProjectileComponent) {
+		ProjectileComponent = this->FindComponentByClass<UProjectileComponent>();
+	}
 
 	if (Skin.Num() != 0)
 	{
@@ -111,6 +114,11 @@ void AWeaponBase::ShootWeapon(FVector CameraForwardVector, bool bIsFiring)
 				UE_LOG(LogTemp, Warning, TEXT("Hit %s"), *HitResult.Actor->GetName());
 			}
 		}
+	}
+
+	if (ProjectileComponent)
+	{
+		
 	}
 
 

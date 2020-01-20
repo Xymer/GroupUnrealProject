@@ -12,7 +12,7 @@
 #include "MagazineBase.h"
 #include "BulletBase.h"
 #include "HitScanComponent.h"
-
+#include "ProjectileComponent.h"
 
 #include "Templates\SubclassOf.h"
 #include "WeaponBase.generated.h"
@@ -36,7 +36,7 @@ public:
 	bool bHasFired = false;
 	int CurrentBurst = 0;
 	class UHitScanComponent* HitScanComponent;
-
+	class UProjectileComponent* ProjectileComponent;
 	/*Skeletal mesh need Muzzle bone*/
 	UPROPERTY(VisibleAnywhere, Category = "Mesh")
 		USkeletalMeshComponent* WeaponMesh;
