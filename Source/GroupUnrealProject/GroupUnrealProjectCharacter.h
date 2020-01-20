@@ -32,7 +32,10 @@ public:
 
 	UPROPERTY(EditAnywhere,BlueprintReadWrite, Category = "Weapon Pickup Box")
 		UBoxComponent* WeaponPickupBox = nullptr;
-	
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+		bool bIsFiring = false;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+		float FiringAxisValue;
 
 protected:
 	virtual void BeginPlay();
@@ -83,28 +86,23 @@ public:
 	UFUNCTION(BlueprintCallable, BlueprintAuthorityOnly)
 		void ChangeWeaponSkin();
 		void ChangeWeaponSkin_Implementation();
-
+	UFUNCTION(BlueprintCallable, BlueprintAuthorityOnly)
+		void ChangeFiremode();
+		void ChangeFiremode_Implementation();
 
 
 protected:
 
 
-	/** Handles moving forward/backward */
+	
 	void MoveForward(float Val);
 
-	/** Handles stafing movement, left and right */
+	
 	void MoveRight(float Val);
 
-	/**
-	 * Called via input to turn at a given rate.
-	 * @param Rate	This is a normalized rate, i.e. 1.0 means 100% of desired turn rate
-	 */
+	
 	void TurnAtRate(float Rate);
 
-	/**
-	 * Called via input to turn look up/down at a given rate.
-	 * @param Rate	This is a normalized rate, i.e. 1.0 means 100% of desired turn rate
-	 */
 	void LookUpAtRate(float Rate);
 
 
@@ -112,22 +110,14 @@ protected:
 
 	
 protected:
-	// APawn interface
+	
 	virtual void SetupPlayerInputComponent(UInputComponent* InputComponent) override;
-	// End of APawn interface
 
-	/* 
-	 * Configures input for touchscreen devices if there is a valid touch interface for doing so 
-	 *
-	 * @param	InputComponent	The input component pointer to bind controls to
-	 * @returns true if touch controls were enabled.
-	 */
-	bool EnableTouchscreenMovement(UInputComponent* InputComponent);
 
 public:
-	/** Returns Mesh1P subobject **/
+	
 	FORCEINLINE class USkeletalMeshComponent* GetMesh1P() const { return Mesh1P; }
-	/** Returns FirstPersonCameraComponent subobject **/
+
 	FORCEINLINE class UCameraComponent* GetFirstPersonCameraComponent() const { return FirstPersonCameraComponent; }
 
 	

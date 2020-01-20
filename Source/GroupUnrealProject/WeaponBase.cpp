@@ -30,6 +30,8 @@ AWeaponBase::AWeaponBase()
 void AWeaponBase::BeginPlay()
 {
 	Super::BeginPlay();
+
+	
 	if (!this->ActorHasTag("Weapon"))
 	{
 		this->Tags.Add("Weapon");
@@ -45,39 +47,73 @@ void AWeaponBase::BeginPlay()
 	}
 	CurrentMagazine = NewObject<UMagazineBase>(GetTransientPackage(), *AvailableMagazines[SelectedMagazine]);
 	CurrentBullet = NewObject<UBulletBase>(GetTransientPackage(), *AvailableBullets[SelectedBullets]);
-	CurrentUsedMagazine = CurrentMagazine->MagazineSize;
-
+	CurrentMagazineAmmoCount = CurrentMagazine->MagazineSize;
+	CurrentFireMode = SemiAutomatic;
+	WeaponMesh->SetSimulatePhysics(true);
+	WeaponMesh->SetCollisionProfileName("PhysicsActor");
 }
 
 // Called every frame
 void AWeaponBase::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
+	TempShootDelay -= DeltaTime;
+	if (TempShootDelay <= 0)
+	{
+		bShootDelayDone = true;
+		TempShootDelay = ShootDelay;
+	}
+	else if (TempShootDelay > 0)
+	{
+		bShootDelayDone = false;
+	}
+	
 
-
-
+	
 }
 
-void AWeaponBase::ShootWeapon(FVector CameraForwardVector)
+void AWeaponBase::ShootWeapon(FVector CameraForwardVector, bool bIsFiring)
 {
+	//TODO: Rewrite HitResult to function
 	if (HitScanComponent)
 	{
-		switch (CurrentFireMode)
+		if (CurrentFireMode == SemiAutomatic && bIsFiring && !bHasFired)
 		{
-		case SemiAutomatic:
-			
-			
 			HitResult = HitScanComponent->LineTrace(WeaponMesh->GetSocketLocation("Muzzle"), CameraForwardVector);
 			if (HitResult.GetActor())
 			{
-			UE_LOG(LogTemp, Warning, TEXT("Hit %s"), *HitResult.Actor->GetName());
+				UE_LOG(LogTemp, Warning, TEXT("Hit %s"), *HitResult.Actor->GetName());
 			}
-			
-			break;
+			bHasFired = true;
+		}
+
+		if (CurrentFireMode == BurstFire && !bHasFired)
+		{			
+			if (CurrentBurst < BurstFireCount)
+			{
+				HitResult = HitScanComponent->LineTrace(WeaponMesh->GetSocketLocation("Muzzle"), CameraForwardVector);
+				if (HitResult.GetActor())
+				{
+					UE_LOG(LogTemp, Warning, TEXT("Hit %s"), *HitResult.Actor->GetName());
+				}
+				CurrentBurst++;
+			}
+			else if (CurrentBurst > BurstFireCount)
+			{
+				bHasFired = true;
+			}
+		}
+		if (CurrentFireMode == FullAuto  && bShootDelayDone)
+		{
+			HitResult = HitScanComponent->LineTrace(WeaponMesh->GetSocketLocation("Muzzle"), CameraForwardVector);
+			if (HitResult.GetActor())
+			{
+				UE_LOG(LogTemp, Warning, TEXT("Hit %s"), *HitResult.Actor->GetName());
+			}
 		}
 	}
 
-	
+
 }
 
 void AWeaponBase::ReloadWeapon()
@@ -92,13 +128,13 @@ void AWeaponBase::SwitchMagazine()
 	{
 		SelectedMagazine = 0;
 		CurrentMagazine = NewObject<UMagazineBase>(GetTransientPackage(), *AvailableMagazines[SelectedMagazine]);
-		CurrentUsedMagazine = CurrentMagazine->MagazineSize;
+		CurrentMagazineAmmoCount = CurrentMagazine->MagazineSize;
 	}
 
 	else if (SelectedMagazine < AvailableMagazines.Num())
 	{
 		CurrentMagazine = NewObject<UMagazineBase>(GetTransientPackage(), *AvailableMagazines[SelectedMagazine]);
-		CurrentUsedMagazine = CurrentMagazine->MagazineSize;
+		CurrentMagazineAmmoCount = CurrentMagazine->MagazineSize;
 	}
 }
 
@@ -132,6 +168,24 @@ void AWeaponBase::SwitchSkin()
 		WeaponMesh->SetMaterial(0, CurrentSkin);
 	}
 }
+
+void AWeaponBase::SwitchFireMode()
+{
+	switch (CurrentFireMode)
+	{
+		case SemiAutomatic:
+			CurrentFireMode = BurstFire;
+			break;
+		case BurstFire:
+			CurrentFireMode = FullAuto;
+			break;
+		case FullAuto:
+			CurrentFireMode = SemiAutomatic;
+			break;
+	}
+}
+
+
 
 
 

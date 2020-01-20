@@ -15,7 +15,7 @@ class UMagazineBase : public UObject
 	GENERATED_BODY()
 public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Magazine")
-		FName MagazineType;
+		FName MagazineName;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Magazine")
 		 int MagazineSize;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Magazine")

@@ -68,7 +68,7 @@ void AGroupUnrealProjectCharacter::SetupPlayerInputComponent(class UInputCompone
 	// Bind jump events
 	PlayerInputComponent->BindAction("Jump", IE_Pressed, this, &ACharacter::Jump);
 	PlayerInputComponent->BindAction("Jump", IE_Released, this, &ACharacter::StopJumping);
-
+	
 	// Bind fire event
 	//PlayerInputComponent->BindAction("Fire", IE_Pressed, this, &AGroupUnrealProjectCharacter::OnFire);
 
@@ -146,17 +146,31 @@ void AGroupUnrealProjectCharacter::ChangeWeaponSkin()
 	}
 }
 
+void AGroupUnrealProjectCharacter::ChangeFiremode()
+{
+	if (CurrentWeapon)
+	{
+		CurrentWeapon->SwitchFireMode();
+	}
+}
+
 #pragma endregion
 
 
 void AGroupUnrealProjectCharacter::OnFire()
 {
-	if (CurrentWeapon)
-	{
-		 CurrentWeapon->ShootWeapon(FirstPersonCameraComponent->GetForwardVector() * CurrentWeapon->HitScanComponent->HitScanRange);
-	}
 
+	if (CurrentWeapon && FiringAxisValue > 0)
+	{
+		 CurrentWeapon->ShootWeapon(FirstPersonCameraComponent->GetForwardVector() * CurrentWeapon->HitScanComponent->HitScanRange,bIsFiring);
+	}
+	if (CurrentWeapon && FiringAxisValue <= 0)
+	{
+		CurrentWeapon->bHasFired = false;
+		CurrentWeapon->CurrentBurst = 0;
+	}
 }
+
 
 void AGroupUnrealProjectCharacter::MoveForward(float Value)
 {

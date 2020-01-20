@@ -27,17 +27,20 @@ private:
 	int SelectedBullets = 0;
 	int SelectedMagazine = 0;
 	int CurrentSelectedSkin = 0;
-	EFireMode CurrentFireMode = EFireMode::SemiAutomatic;
+	EFireMode CurrentFireMode;
 	FHitResult HitResult;
-	
+	bool bShootDelayDone;
 
 public:
+
+	bool bHasFired = false;
+	int CurrentBurst = 0;
 	class UHitScanComponent* HitScanComponent;
-	
+
 	/*Skeletal mesh need Muzzle bone*/
 	UPROPERTY(VisibleAnywhere, Category = "Mesh")
 		USkeletalMeshComponent* WeaponMesh;
-	UPROPERTY(EditAnywhere,BlueprintReadWrite, Category = "Trigger")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Trigger")
 		class UBoxComponent* TriggerBox;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Skin")
 		TArray<UMaterialInterface*> Skin;
@@ -47,17 +50,22 @@ public:
 		TArray <TSubclassOf<UMagazineBase>> AvailableMagazines;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Ammo")
 		TArray <TSubclassOf<UBulletBase>> AvailableBullets;
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Ammo")
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Ammo")
 		UMagazineBase* CurrentMagazine;
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Ammo")
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Ammo")
 		UBulletBase* CurrentBullet;
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Ammo")
-		int CurrentUsedMagazine;
+		int CurrentMagazineAmmoCount;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Weapon Properties")
 		TEnumAsByte<EFireMode> FireMode = EFireMode::SemiAutomatic;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Weapon Properties")
 		FVector MuzzlePoint;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Weapon Properties")
+		float ShootDelay = 0.05f;
+		float TempShootDelay = 0.05f;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Weapon Properties")
+		int BurstFireCount = 3;
 	AWeaponBase();
 
 protected:
@@ -68,19 +76,20 @@ public:
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 	UFUNCTION()
-		void ShootWeapon(FVector CameraForwardVector);
-	
+		void ShootWeapon(FVector CameraForwardVector, bool bIsFiring);
+
 	UFUNCTION()
 		void ReloadWeapon();
-	
+
 	UFUNCTION()
 		void SwitchMagazine();
-		
+
 	UFUNCTION()
 		void SwitchBullets();
-	
+
 	UFUNCTION()
 		void SwitchSkin();
-		
-		
+	UFUNCTION()
+		void SwitchFireMode();
+
 };
