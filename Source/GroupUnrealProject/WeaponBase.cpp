@@ -211,6 +211,10 @@ void AWeaponBase::StartLineTrace(FVector CameraForwardVector)
 	if (HitResult.GetActor())
 	{
 		UE_LOG(LogTemp, Warning, TEXT("Hit %s"), *HitResult.Actor->GetName());
+		if (Cast<IDamagableInterface>(HitResult.GetActor()))
+		{
+		Cast<IDamagableInterface>(HitResult.GetActor())->Execute_ApplyDamage(HitResult.GetActor(),CurrentBullet->BulletDamage);
+		}
 	}
 	CurrentMagazineAmmoCount--;
 }
