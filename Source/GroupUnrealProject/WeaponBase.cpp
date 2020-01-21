@@ -30,44 +30,14 @@ AWeaponBase::AWeaponBase()
 void AWeaponBase::BeginPlay()
 {
 	Super::BeginPlay();
-
-	
-	if (!this->ActorHasTag("Weapon"))
-	{
-		this->Tags.Add("Weapon");
-	}
-	if (!HitScanComponent)
-	{
-		if (this->FindComponentByClass<UHitScanComponent>())
-		{
-			HitScanComponent = this->FindComponentByClass<UHitScanComponent>();
-		}
-		
-	}
-	if (!ProjectileComponent)
-	{
-		if (this->FindComponentByClass<UProjectileComponent>())
-		{
-		ProjectileComponent = this->FindComponentByClass<UProjectileComponent>();
-		}
-	}
-
-	if (Skin.Num() != 0)
-	{
-		CurrentSkin = Skin[0];
-	}
-	CurrentMagazine = NewObject<UMagazineBase>(GetTransientPackage(), *AvailableMagazines[SelectedMagazine]);
-	CurrentBullet = NewObject<UBulletBase>(GetTransientPackage(), *AvailableBullets[SelectedBullets]);
-	CurrentMagazineAmmoCount = CurrentMagazine->MagazineSize;
-	CurrentFireMode = SemiAutomatic;
-	WeaponMesh->SetSimulatePhysics(true);
-	WeaponMesh->SetCollisionProfileName("PhysicsActor");
+	InitializeWeaponBase();
 }
 
 // Called every frame
 void AWeaponBase::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
+	MegaDeltaTime = DeltaTime;
 	TempShootDelay -= DeltaTime;
 	if (TempShootDelay <= 0)
 	{
@@ -78,66 +48,67 @@ void AWeaponBase::Tick(float DeltaTime)
 	{
 		bShootDelayDone = false;
 	}
+	if (bIsReloading)
+	{	
+		TempReloadTime -= MegaDeltaTime;
+		if (TempReloadTime <= 0)
+		{
+			CurrentMagazineAmmoCount = DeductFromAmmoReserve(CurrentMagazine->MagazineSize);
+			bIsReloading = false;
+		}
+	}
+		
 	
-
 	
 }
 
 void AWeaponBase::ShootWeapon(FVector CameraForwardVector, bool bIsFiring)
 {
 	//TODO: Rewrite HitResult to function
-	if (HitScanComponent)
+	if (HitScanComponent && CurrentMagazineAmmoCount > 0)
 	{
 		if (CurrentFireMode == SemiAutomatic && bIsFiring && !bHasFired)
 		{
-			HitResult = HitScanComponent->LineTrace(WeaponMesh->GetSocketLocation("Muzzle"), CameraForwardVector);
-			if (HitResult.GetActor())
-			{
-				UE_LOG(LogTemp, Warning, TEXT("Hit %s"), *HitResult.Actor->GetName());
-			}
+			StartLineTrace(CameraForwardVector);
+		
 			bHasFired = true;
 		}
 
 		if (CurrentFireMode == BurstFire && !bHasFired)
 		{			
-			if (CurrentBurst < BurstFireCount)
+			if (CurrentBurst < BurstFireCount && CurrentMagazineAmmoCount > 0)
 			{
-				HitResult = HitScanComponent->LineTrace(WeaponMesh->GetSocketLocation("Muzzle"), CameraForwardVector);
-				if (HitResult.GetActor())
-				{
-					UE_LOG(LogTemp, Warning, TEXT("Hit %s"), *HitResult.Actor->GetName());
-				}
+				StartLineTrace(CameraForwardVector);
+				
 				CurrentBurst++;
+
 			}
-			else if (CurrentBurst > BurstFireCount)
+			else if (CurrentBurst > BurstFireCount || CurrentMagazineAmmoCount == 0)
 			{
 				bHasFired = true;
 			}
 		}
 		if (CurrentFireMode == FullAuto  && bShootDelayDone)
 		{
-			HitResult = HitScanComponent->LineTrace(WeaponMesh->GetSocketLocation("Muzzle"), CameraForwardVector);
-			if (HitResult.GetActor())
-			{
-				UE_LOG(LogTemp, Warning, TEXT("Hit %s"), *HitResult.Actor->GetName());
-			}
+			StartLineTrace(CameraForwardVector);
 		}
-	}
-	else
-	{
-
-	}
-
+		
+	}	
 	if (ProjectileComponent)
 	{
 		
 	}
-
-
+	if (CurrentMagazineAmmoCount <= 0 && !bIsReloading)
+	{
+		ReloadWeapon();
+	}
 }
 
 void AWeaponBase::ReloadWeapon()
 {
+	bIsReloading = true;
+	TempReloadTime = CurrentMagazine->ReloadSpeed;
+	
 }
 
 
@@ -156,6 +127,7 @@ void AWeaponBase::SwitchMagazine()
 		CurrentMagazine = NewObject<UMagazineBase>(GetTransientPackage(), *AvailableMagazines[SelectedMagazine]);
 		CurrentMagazineAmmoCount = CurrentMagazine->MagazineSize;
 	}
+	ReloadWeapon();
 }
 
 void AWeaponBase::SwitchBullets()
@@ -171,6 +143,7 @@ void AWeaponBase::SwitchBullets()
 	{
 		CurrentBullet = NewObject<UBulletBase>(GetTransientPackage(), *AvailableBullets[SelectedBullets]);
 	}
+	ReloadWeapon();
 }
 
 void AWeaponBase::SwitchSkin()
@@ -203,6 +176,110 @@ void AWeaponBase::SwitchFireMode()
 			CurrentFireMode = SemiAutomatic;
 			break;
 	}
+}
+
+void AWeaponBase::AddToAmmoReserve(int Amount)
+{
+	AmmoReserve += Amount;
+	if (AmmoReserve >= MaxAmmoReserve)
+	{
+		AmmoReserve = MaxAmmoReserve;
+	}
+}
+
+int AWeaponBase::DeductFromAmmoReserve(int Amount)
+{
+	int TempAmmoReserve;
+	if (AmmoReserve <= Amount)
+	{
+		TempAmmoReserve = AmmoReserve;
+		AmmoReserve = 0;
+		return TempAmmoReserve;
+	}
+	else
+	{
+	AmmoReserve -= (Amount - CurrentMagazineAmmoCount);
+	return Amount;
+	}
+}
+
+void AWeaponBase::StartLineTrace(FVector CameraForwardVector)
+{
+	HitResult = HitScanComponent->LineTrace(WeaponMesh->GetSocketLocation("Muzzle"), CameraForwardVector);
+	PlayShootSound();
+	SpawnParticles();
+	if (HitResult.GetActor())
+	{
+		UE_LOG(LogTemp, Warning, TEXT("Hit %s"), *HitResult.Actor->GetName());
+	}
+	CurrentMagazineAmmoCount--;
+}
+
+void AWeaponBase::PlayShootSound()
+{
+	if (AudioComponent)
+	{
+	AudioComponent->Play();
+	}
+}
+
+void AWeaponBase::SpawnParticles()
+{
+	if (ParticleComponent)
+	{
+		
+		ParticleComponent->SetActive(true,true);
+	}
+}
+
+void AWeaponBase::InitializeWeaponBase()
+{
+	if (!this->ActorHasTag("Weapon"))
+	{
+		this->Tags.Add("Weapon");
+	}
+	if (!HitScanComponent)
+	{
+		if (this->FindComponentByClass<UHitScanComponent>())
+		{
+			HitScanComponent = this->FindComponentByClass<UHitScanComponent>();
+		}
+
+	}
+	if (!ProjectileComponent)
+	{
+		if (this->FindComponentByClass<UProjectileComponent>())
+		{
+			ProjectileComponent = this->FindComponentByClass<UProjectileComponent>();
+		}
+	}
+	if (!AudioComponent)
+	{
+		if (this->FindComponentByClass<UAudioComponent>())
+		{
+			AudioComponent = this->FindComponentByClass<UAudioComponent>();
+		}
+	}
+
+	if (!ParticleComponent)
+	{
+		if (this->FindComponentByClass<UParticleSystemComponent>())
+		{
+			ParticleComponent = this->FindComponentByClass<UParticleSystemComponent>();
+			ParticleComponent->SetWorldLocation(WeaponMesh->GetSocketLocation("Muzzle"));
+		}
+	}
+
+	if (Skin.Num() != 0)
+	{
+		CurrentSkin = Skin[0];
+	}
+	CurrentMagazine = NewObject<UMagazineBase>(GetTransientPackage(), *AvailableMagazines[SelectedMagazine]);
+	CurrentBullet = NewObject<UBulletBase>(GetTransientPackage(), *AvailableBullets[SelectedBullets]);
+	CurrentMagazineAmmoCount = CurrentMagazine->MagazineSize;
+	CurrentFireMode = SemiAutomatic;
+	WeaponMesh->SetSimulatePhysics(true);
+	WeaponMesh->SetCollisionProfileName("PhysicsActor");
 }
 
 

@@ -89,6 +89,9 @@ public:
 	UFUNCTION(BlueprintCallable, BlueprintAuthorityOnly)
 		void ChangeFiremode();
 		void ChangeFiremode_Implementation();
+	UFUNCTION(BlueprintCallable, BlueprintAuthorityOnly)
+		void ReloadCurrentWeapon();
+		void ReloadCurrentWeapon_Implementation();
 
 
 protected:

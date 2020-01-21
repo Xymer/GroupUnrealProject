@@ -154,6 +154,14 @@ void AGroupUnrealProjectCharacter::ChangeFiremode()
 	}
 }
 
+void AGroupUnrealProjectCharacter::ReloadCurrentWeapon()
+{
+	if (CurrentWeapon)
+	{
+		CurrentWeapon->ReloadWeapon();
+	}
+}
+
 #pragma endregion
 
 

@@ -5,6 +5,8 @@
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
 #include "Components/BoxComponent.h"
+#include "Components/AudioComponent.h"
+#include "Kismet/GameplayStatics.h"
 #include "Math/Vector.h"
 
 
@@ -14,7 +16,9 @@
 #include "HitScanComponent.h"
 #include "ProjectileComponent.h"
 
+
 #include "Templates\SubclassOf.h"
+#include "Particles/ParticleSystemComponent.h"
 #include "WeaponBase.generated.h"
 
 UCLASS()
@@ -30,22 +34,32 @@ private:
 	EFireMode CurrentFireMode;
 	FHitResult HitResult;
 	bool bShootDelayDone;
-
+	float MegaDeltaTime;
+	float TempReloadTime;
+	bool bReloadTimeDone;
+	bool bIsReloading;
 public:
 
 	bool bHasFired = false;
 	int CurrentBurst = 0;
+
 	class UHitScanComponent* HitScanComponent;
 	class UProjectileComponent* ProjectileComponent;
+	class UAudioComponent* AudioComponent;
+	class UParticleSystemComponent* ParticleComponent;
+	class UGameplayStatics* GameplayStaticComponent;
+
 	/*Skeletal mesh need Muzzle bone*/
 	UPROPERTY(VisibleAnywhere, Category = "Mesh")
 		USkeletalMeshComponent* WeaponMesh;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Trigger")
 		class UBoxComponent* TriggerBox;
+
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Skin")
 		TArray<UMaterialInterface*> Skin;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Skin")
 		UMaterialInterface* CurrentSkin;
+
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Ammo")
 		TArray <TSubclassOf<UMagazineBase>> AvailableMagazines;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Ammo")
@@ -56,6 +70,10 @@ public:
 		UBulletBase* CurrentBullet;
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Ammo")
 		int CurrentMagazineAmmoCount;
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Ammo")
+		int AmmoReserve = 120;
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Ammo")
+		int MaxAmmoReserve = 360;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Weapon Properties")
 		TEnumAsByte<EFireMode> FireMode = EFireMode::SemiAutomatic;
@@ -66,6 +84,10 @@ public:
 		float TempShootDelay = 0.05f;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Weapon Properties")
 		int BurstFireCount = 3;
+
+	
+		
+	
 	AWeaponBase();
 
 protected:
@@ -78,18 +100,28 @@ public:
 	UFUNCTION()
 		void ShootWeapon(FVector CameraForwardVector, bool bIsFiring);
 
-	UFUNCTION()
+	UFUNCTION(BlueprintCallable,BlueprintAuthorityOnly, Category = "Weapon Functions")
 		void ReloadWeapon();
 
-	UFUNCTION()
+	UFUNCTION(BlueprintCallable, BlueprintAuthorityOnly, Category = "Weapon Functions")
 		void SwitchMagazine();
 
-	UFUNCTION()
+	UFUNCTION(BlueprintCallable, BlueprintAuthorityOnly, Category = "Weapon Functions")
 		void SwitchBullets();
 
-	UFUNCTION()
+	UFUNCTION(BlueprintCallable, BlueprintAuthorityOnly, Category = "Weapon Functions")
 		void SwitchSkin();
-	UFUNCTION()
-		void SwitchFireMode();
 
+	UFUNCTION(BlueprintCallable, BlueprintAuthorityOnly, Category = "Weapon Functions")
+		void SwitchFireMode();
+	UFUNCTION(BlueprintCallable, BlueprintAuthorityOnly, Category = "Ammo")
+		void AddToAmmoReserve(int Amount);
+	UFUNCTION(BlueprintCallable, BlueprintAuthorityOnly, Category = "Ammo")
+		int DeductFromAmmoReserve(int Amount);
+
+private:
+		void StartLineTrace(FVector CameraForwardVector);
+		void PlayShootSound();
+		void SpawnParticles();
+		void InitializeWeaponBase();
 };
