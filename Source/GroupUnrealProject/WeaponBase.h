@@ -31,18 +31,17 @@ private:
 	int SelectedBullets = 0;
 	int SelectedMagazine = 0;
 	int CurrentSelectedSkin = 0;
-	EFireMode CurrentFireMode;
+	
 	FHitResult HitResult;
 	bool bShootDelayDone;
 	float MegaDeltaTime;
-	float TempReloadTime;
 	bool bReloadTimeDone;
-	bool bIsReloading;
+	float TempReloadTime;
 public:
 
 	bool bHasFired = false;
 	int CurrentBurst = 0;
-
+	//EFireMode CurrentFireMode;
 	class UHitScanComponent* HitScanComponent;
 	class UProjectileComponent* ProjectileComponent;
 	class UAudioComponent* AudioComponent;
@@ -50,11 +49,11 @@ public:
 	class UGameplayStatics* GameplayStaticComponent;
 
 	/*Skeletal mesh need Muzzle bone*/
-	UPROPERTY(VisibleAnywhere, Category = "Mesh")
-		USkeletalMeshComponent* WeaponMesh;
+	UPROPERTY(VisibleAnywhere, Category = "Mesh", meta = (Tooltip = "Your skeletal mesh need a Muzzle bone to function (It's case sensetive)"))
+		USkeletalMeshComponent* WeaponMesh ;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Trigger")
 		class UBoxComponent* TriggerBox;
-
+	
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Skin")
 		TArray<UMaterialInterface*> Skin;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Skin")
@@ -76,7 +75,7 @@ public:
 		int MaxAmmoReserve = 360;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Weapon Properties")
-		TEnumAsByte<EFireMode> FireMode = EFireMode::SemiAutomatic;
+		TEnumAsByte<EFireMode> CurrentFireMode = EFireMode::SemiAutomatic;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Weapon Properties")
 		FVector MuzzlePoint;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Weapon Properties")
@@ -85,8 +84,9 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Weapon Properties")
 		int BurstFireCount = 3;
 
-	
-		
+	UPROPERTY(EditAnywhere,BlueprintReadWrite, Category = "Reloading")
+		bool bIsReloading;
+
 	
 	AWeaponBase();
 

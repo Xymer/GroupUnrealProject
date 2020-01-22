@@ -65,7 +65,7 @@ void AWeaponBase::Tick(float DeltaTime)
 void AWeaponBase::ShootWeapon(FVector CameraForwardVector, bool bIsFiring)
 {
 	//TODO: Rewrite HitResult to function
-	if (HitScanComponent && CurrentMagazineAmmoCount > 0)
+	if (HitScanComponent && CurrentMagazineAmmoCount > 0 && !bIsReloading)
 	{
 		if (CurrentFireMode == SemiAutomatic && bIsFiring && !bHasFired)
 		{
@@ -190,11 +190,11 @@ void AWeaponBase::AddToAmmoReserve(int Amount)
 int AWeaponBase::DeductFromAmmoReserve(int Amount)
 {
 	int TempAmmoReserve;
-	if (AmmoReserve <= Amount)
-	{
-		TempAmmoReserve = AmmoReserve;
-		AmmoReserve = 0;
-		return TempAmmoReserve;
+	if (CurrentMagazineAmmoCount + AmmoReserve < Amount)
+	{	
+			TempAmmoReserve = AmmoReserve;
+			AmmoReserve = 0;
+			return TempAmmoReserve + CurrentMagazineAmmoCount;	
 	}
 	else
 	{

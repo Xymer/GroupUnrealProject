@@ -18,8 +18,7 @@ class AGroupUnrealProjectCharacter : public ACharacter
 	/** Pawn mesh: 1st person view (arms; seen only by self) */
 	UPROPERTY(VisibleDefaultsOnly, Category=Mesh)
 	class USkeletalMeshComponent* Mesh1P;
-	UPROPERTY()
-	class AWeaponBase* CurrentWeapon = nullptr;
+	
 	/** First person camera */
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera, meta = (AllowPrivateAccess = "true"))
 	class UCameraComponent* FirstPersonCameraComponent;
@@ -29,7 +28,8 @@ class AGroupUnrealProjectCharacter : public ACharacter
 
 public:
 	AGroupUnrealProjectCharacter();
-
+	UPROPERTY(EditAnywhere,BlueprintReadWrite, Category = "Weapon")
+		class AWeaponBase* CurrentWeapon = nullptr;
 	UPROPERTY(EditAnywhere,BlueprintReadWrite, Category = "Weapon Pickup Box")
 		UBoxComponent* WeaponPickupBox = nullptr;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
