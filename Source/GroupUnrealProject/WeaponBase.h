@@ -34,7 +34,7 @@ private:
 	
 	FHitResult HitResult;
 	bool bShootDelayDone;
-	float MegaDeltaTime;
+	
 	bool bReloadTimeDone;
 	float TempReloadTime;
 public:

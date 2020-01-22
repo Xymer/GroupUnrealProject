@@ -6,6 +6,7 @@
 #include "Components/ActorComponent.h"
 #include "Engine/World.h"
 #include "DrawDebugHelpers.h"
+#include "Particles/ParticleSystemComponent.h"
 #include "HitScanComponent.generated.h"
 
 
@@ -20,6 +21,10 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Hit Scan")
 		float HitScanRange = 5000;
 	
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Debug")
+		float ShootDebugTime = 2.0f;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Debug")
+		float HitDebugTime = 5.0f;
 
 private:
 	FHitResult HitResult;

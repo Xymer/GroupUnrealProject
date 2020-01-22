@@ -37,7 +37,7 @@ void AWeaponBase::BeginPlay()
 void AWeaponBase::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
-	MegaDeltaTime = DeltaTime;
+	
 	TempShootDelay -= DeltaTime;
 	if (TempShootDelay <= 0)
 	{
@@ -50,21 +50,17 @@ void AWeaponBase::Tick(float DeltaTime)
 	}
 	if (bIsReloading)
 	{	
-		TempReloadTime -= MegaDeltaTime;
+		TempReloadTime -= DeltaTime;
 		if (TempReloadTime <= 0)
 		{
 			CurrentMagazineAmmoCount = DeductFromAmmoReserve(CurrentMagazine->MagazineSize);
 			bIsReloading = false;
 		}
 	}
-		
-	
-	
 }
 
 void AWeaponBase::ShootWeapon(FVector CameraForwardVector, bool bIsFiring)
 {
-	//TODO: Rewrite HitResult to function
 	if (HitScanComponent && CurrentMagazineAmmoCount > 0 && !bIsReloading)
 	{
 		if (CurrentFireMode == SemiAutomatic && bIsFiring && !bHasFired)
@@ -81,7 +77,6 @@ void AWeaponBase::ShootWeapon(FVector CameraForwardVector, bool bIsFiring)
 				StartLineTrace(CameraForwardVector);
 				
 				CurrentBurst++;
-
 			}
 			else if (CurrentBurst > BurstFireCount || CurrentMagazineAmmoCount == 0)
 			{
@@ -106,9 +101,12 @@ void AWeaponBase::ShootWeapon(FVector CameraForwardVector, bool bIsFiring)
 
 void AWeaponBase::ReloadWeapon()
 {
+	
+	if ( AmmoReserve != 0 && CurrentMagazineAmmoCount != CurrentMagazine->MagazineSize)
+	{
 	bIsReloading = true;
 	TempReloadTime = CurrentMagazine->ReloadSpeed;
-	
+	}
 }
 
 
@@ -119,15 +117,15 @@ void AWeaponBase::SwitchMagazine()
 	{
 		SelectedMagazine = 0;
 		CurrentMagazine = NewObject<UMagazineBase>(GetTransientPackage(), *AvailableMagazines[SelectedMagazine]);
-		CurrentMagazineAmmoCount = CurrentMagazine->MagazineSize;
+		ReloadWeapon();
 	}
 
 	else if (SelectedMagazine < AvailableMagazines.Num())
 	{
 		CurrentMagazine = NewObject<UMagazineBase>(GetTransientPackage(), *AvailableMagazines[SelectedMagazine]);
-		CurrentMagazineAmmoCount = CurrentMagazine->MagazineSize;
+		ReloadWeapon();
 	}
-	ReloadWeapon();
+	
 }
 
 void AWeaponBase::SwitchBullets()
@@ -137,13 +135,15 @@ void AWeaponBase::SwitchBullets()
 	{
 		SelectedBullets = 0;
 		CurrentBullet = NewObject<UBulletBase>(GetTransientPackage(), *AvailableBullets[SelectedBullets]);
+		ReloadWeapon();
 	}
 
 	else if (SelectedBullets < AvailableBullets.Num() - 1)
 	{
 		CurrentBullet = NewObject<UBulletBase>(GetTransientPackage(), *AvailableBullets[SelectedBullets]);
+		ReloadWeapon();
 	}
-	ReloadWeapon();
+	
 }
 
 void AWeaponBase::SwitchSkin()
@@ -231,7 +231,6 @@ void AWeaponBase::SpawnParticles()
 {
 	if (ParticleComponent)
 	{
-		
 		ParticleComponent->SetActive(true,true);
 	}
 }

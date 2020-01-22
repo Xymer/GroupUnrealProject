@@ -37,9 +37,8 @@ FHitResult UHitScanComponent::LineTrace(FVector StartVector, FVector EndVector)
 
 	GetWorld()->LineTraceSingleByChannel(HitResult, StartVector, EndVector * HitScanRange, ECC_Visibility);
 	
-	DrawDebugLine(GetWorld(), StartVector, EndVector * HitScanRange, FColor::Green, false, 5.0f);
+	DrawDebugLine(GetWorld(), StartVector, HitResult.ImpactPoint, FColor::Green, false, ShootDebugTime);
+	DrawDebugLine(GetWorld(), HitResult.ImpactPoint, HitResult.ImpactPoint + HitResult.ImpactNormal * 50, FColor::Red, false, HitDebugTime);
 	return HitResult;
-	
-	
 }
 
