@@ -2,6 +2,7 @@
 
 
 #include "ZoomComponent.h"
+#include "Math/UnrealMathVectorCommon.h"
 
 // Sets default values for this component's properties
 UZoomComponent::UZoomComponent()
@@ -30,5 +31,20 @@ void UZoomComponent::TickComponent(float DeltaTime, ELevelTick TickType, FActorC
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
 
 	// ...
+}
+
+void UZoomComponent::ZoomIn()
+{
+	CameraComponent->SetFieldOfView(ZoomValue);
+}
+
+void UZoomComponent::ZoomOut()
+{
+	CameraComponent->SetFieldOfView(DefaultZoomValue);
+}
+
+void UZoomComponent::ZoomOutOnDropWeapon()
+{
+	CameraComponent->SetFieldOfView(DefaultZoomValue);
 }
 

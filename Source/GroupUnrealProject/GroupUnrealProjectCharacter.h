@@ -20,13 +20,14 @@ class AGroupUnrealProjectCharacter : public ACharacter
 	class USkeletalMeshComponent* Mesh1P;
 	
 	/** First person camera */
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera, meta = (AllowPrivateAccess = "true"))
-	class UCameraComponent* FirstPersonCameraComponent;
+	
 	
 
 
 
 public:
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera)
+		class UCameraComponent* FirstPersonCameraComponent;
 	AGroupUnrealProjectCharacter();
 	UPROPERTY(EditAnywhere,BlueprintReadWrite, Category = "Weapon")
 		class AWeaponBase* CurrentWeapon = nullptr;
@@ -92,7 +93,12 @@ public:
 	UFUNCTION(BlueprintCallable, BlueprintAuthorityOnly)
 		void ReloadCurrentWeapon();
 		void ReloadCurrentWeapon_Implementation();
-
+	UFUNCTION(BlueprintCallable, BlueprintAuthorityOnly, Category = "Zoom")
+		void ZoomIn();
+		void ZoomIn_Implementation();
+	UFUNCTION(BlueprintCallable, BlueprintAuthorityOnly, Category = "Zoom")
+		void ZoomOut();
+		void ZoomOut_Implementation();
 
 protected:
 

@@ -15,7 +15,7 @@
 #include "BulletComponent.h"
 #include "HitScanComponent.h"
 #include "ProjectileComponent.h"
-
+#include "ZoomComponent.h"
 
 #include "Templates\SubclassOf.h"
 #include "Particles/ParticleSystemComponent.h"
@@ -49,6 +49,7 @@ public:
 	class UBulletComponent* BulletComponent;
 	class UMagazineComponent* MagazineComponent;
 	class UCameraComponent* CameraComponent;
+	class UZoomComponent* ZoomComponent;
 	/*Skeletal mesh need Muzzle bone*/
 	UPROPERTY(VisibleAnywhere, Category = "Mesh", meta = (Tooltip = "Your skeletal mesh need a Muzzle bone to function (It's case sensetive)"))
 		USkeletalMeshComponent* WeaponMesh ;
@@ -108,6 +109,13 @@ public:
 	UFUNCTION(BlueprintCallable, BlueprintAuthorityOnly, Category = "Ammo")
 		int DeductFromAmmoReserve(int Amount);
 
+	UFUNCTION(BlueprintCallable, BlueprintAuthorityOnly, Category = "Zoom")
+		void ZoomIn();
+	UFUNCTION(BlueprintCallable, BlueprintAuthorityOnly, Category = "Zoom")
+		void ZoomOut();
+
+	void OnPickupWeapon();
+	void OnDropWeapon();
 private:
 		void StartLineTrace(FVector CameraForwardVector);
 		void PlayShootSound();

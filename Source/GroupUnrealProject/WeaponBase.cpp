@@ -4,6 +4,8 @@
 #include "WeaponBase.h"
 #include "Components/BoxComponent.h"
 #include "DamagableInterface.h"
+#include "GroupUnrealProjectCharacter.h"
+#include "Camera/CameraComponent.h"
 #include <Components/SkeletalMeshComponent.h>
 #include <Engine/Engine.h>
 
@@ -177,6 +179,43 @@ int AWeaponBase::DeductFromAmmoReserve(int Amount)
 	}
 }
 
+void AWeaponBase::ZoomIn()
+{
+	if (ZoomComponent)
+	{
+		ZoomComponent->ZoomIn();
+	}
+}
+
+void AWeaponBase::ZoomOut()
+{
+	if (ZoomComponent)
+	{
+		ZoomComponent->ZoomOut();
+	}
+}
+
+void AWeaponBase::OnPickupWeapon()
+{
+	if (!ZoomComponent)
+	{
+		ZoomComponent->CameraComponent = Cast<AGroupUnrealProjectCharacter>(GetOwner())->FirstPersonCameraComponent;
+		ZoomComponent->DefaultZoomValue = CameraComponent->FieldOfView;
+	}
+
+}
+
+void AWeaponBase::OnDropWeapon()
+{
+	if (ZoomComponent)
+	{
+		ZoomComponent->ZoomOut();
+		ZoomComponent->CameraComponent = nullptr;
+	}
+
+	this->SetOwner(nullptr);
+}
+
 void AWeaponBase::StartLineTrace(FVector CameraForwardVector)
 {
 	HitResult = HitScanComponent->LineTrace(WeaponMesh->GetSocketLocation("Muzzle"), CameraForwardVector);
@@ -276,6 +315,13 @@ void AWeaponBase::InitializeWeaponBase()
 		{
 			BulletComponent = this->FindComponentByClass<UBulletComponent>();
 			BulletComponent->InitializeBullet();
+		}
+	}
+	if (!ZoomComponent)
+	{
+		if (this->FindComponentByClass<UZoomComponent>())
+		{
+			ZoomComponent = this->FindComponentByClass<UZoomComponent>();
 		}
 	}
 	CurrentFireMode = SemiAutomatic;

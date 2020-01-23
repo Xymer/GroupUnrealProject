@@ -102,13 +102,10 @@ void AGroupUnrealProjectCharacter::OnBeginOverlap(UPrimitiveComponent* Overlappe
 			CurrentWeapon = Cast<AWeaponBase>(OtherActor);
 			CurrentWeapon->WeaponMesh->SetSimulatePhysics(false);
 			CurrentWeapon->WeaponMesh->SetCollisionProfileName("NoCollision");
-			if (!CurrentWeapon->CameraComponent)
-			{
-				CurrentWeapon->CameraComponent = this->FirstPersonCameraComponent;
-			}
 			OtherActor->AttachToComponent(Mesh1P, FAttachmentTransformRules::SnapToTargetIncludingScale, "GripPoint");
 			OtherActor->SetActorTransform(Mesh1P->GetSocketTransform("GripPoint"));
 			CurrentWeapon->SetOwner(this);
+			CurrentWeapon->OnPickupWeapon();
 
 		}
 	}
@@ -121,10 +118,7 @@ void AGroupUnrealProjectCharacter::DropWeapon()
 		CurrentWeapon->DetachRootComponentFromParent(true);
 		CurrentWeapon->WeaponMesh->SetSimulatePhysics(true);
 		CurrentWeapon->WeaponMesh->SetCollisionProfileName("PhysicsActor");
-		if (CurrentWeapon->CameraComponent)
-		{
-			CurrentWeapon->CameraComponent = nullptr;
-		}
+		CurrentWeapon->OnDropWeapon();
 		CurrentWeapon = nullptr;
 	}
 }
@@ -166,6 +160,22 @@ void AGroupUnrealProjectCharacter::ReloadCurrentWeapon()
 	if (CurrentWeapon)
 	{
 		CurrentWeapon->ReloadWeapon();
+	}
+}
+
+void AGroupUnrealProjectCharacter::ZoomIn()
+{
+	if (CurrentWeapon)
+	{
+		CurrentWeapon->ZoomIn();
+	}
+}
+
+void AGroupUnrealProjectCharacter::ZoomOut()
+{
+	if (CurrentWeapon)
+	{
+		CurrentWeapon->ZoomOut();
 	}
 }
 
