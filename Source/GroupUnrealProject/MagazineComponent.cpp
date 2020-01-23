@@ -3,6 +3,7 @@
 
 #include "MagazineComponent.h"
 #include "WeaponBase.h"
+
 // Sets default values for this component's properties
 UMagazineComponent::UMagazineComponent()
 {
@@ -46,31 +47,31 @@ void UMagazineComponent::DeductFromCurrentMagazineCount()
 int UMagazineComponent::DeductFromAmmoReserve(int Amount)
 {
 	int TempAmmoReserve;
-	if (CurrentMagazineAmmoCount + AmmoReserve < Amount)
+	if (CurrentMagazineAmmoCount + CurrentAmmoReserve[SelectedAmmoReserve] < Amount)
 	{
-		TempAmmoReserve = AmmoReserve;
-		AmmoReserve = 0;
+		TempAmmoReserve = CurrentAmmoReserve[SelectedAmmoReserve];
+		CurrentAmmoReserve[SelectedAmmoReserve] = 0;
 		return TempAmmoReserve + CurrentMagazineAmmoCount;
 	}
 	else
 	{
-		AmmoReserve -= (Amount - CurrentMagazineAmmoCount);
+		CurrentAmmoReserve[SelectedAmmoReserve] -= (Amount - CurrentMagazineAmmoCount);
 		return Amount;
 	}
 }
 
 void UMagazineComponent::AddToAmmoReserve(int Amount)
 {
-	AmmoReserve += Amount;
-	if (AmmoReserve >= MaxAmmoReserve)
+	CurrentAmmoReserve[SelectedAmmoReserve] += Amount;
+	if (CurrentAmmoReserve[SelectedAmmoReserve] >= MaxAmmoReserve[SelectedAmmoReserve])
 	{
-		AmmoReserve = MaxAmmoReserve;
+		CurrentAmmoReserve[SelectedAmmoReserve] = MaxAmmoReserve[SelectedAmmoReserve];
 	}
 }
 
 void UMagazineComponent::ReloadMagazine()
 {
-	if (AmmoReserve != 0 && CurrentMagazineAmmoCount != CurrentMagazine->MagazineSize)
+	if (CurrentAmmoReserve[SelectedAmmoReserve] != 0 && !Cast<AWeaponBase>(GetOwner())->bIsReloading)
 	{
 		Cast<AWeaponBase>(GetOwner())->bIsReloading = true;
 		Cast<AWeaponBase>(GetOwner())->TempReloadTime = CurrentMagazine->ReloadSpeed;

@@ -2,6 +2,7 @@
 
 
 #include "BulletComponent.h"
+#include "MagazineComponent.h"
 #include "WeaponBase.h"
 // Sets default values for this component's properties
 UBulletComponent::UBulletComponent()
@@ -35,23 +36,39 @@ void UBulletComponent::TickComponent(float DeltaTime, ELevelTick TickType, FActo
 void UBulletComponent::InitializeBullet()
 {
 	CurrentBullet = NewObject<UBulletBase>(GetTransientPackage(), *AvailableBullets[SelectedBullets]);
+	if (Cast<AWeaponBase>(GetOwner())->MagazineComponent)
+	{
+		MagazineComponent = Cast<AWeaponBase>(GetOwner())->MagazineComponent;
+		MagazineComponent->SelectedAmmoReserve = SelectedBullets;
+	}
 }
 
 void UBulletComponent::SwitchBullet()
 {
 	SelectedBullets++;
-	if (SelectedBullets > AvailableBullets.Num() - 1)
+	if (SelectedBullets == AvailableBullets.Num())
+	{
+		return;
+	}
+	if (SelectedBullets > AvailableBullets.Num())
 	{
 		SelectedBullets = 0;
 		CurrentBullet = NewObject<UBulletBase>(GetTransientPackage(), *AvailableBullets[SelectedBullets]);
+		if (MagazineComponent)
+		{
+			MagazineComponent->SelectedAmmoReserve = SelectedBullets;
+		}
 		Cast<AWeaponBase>(GetOwner())->ReloadWeapon();
 	}
 
-	else if (SelectedBullets < AvailableBullets.Num() - 1)
+	else if (SelectedBullets < AvailableBullets.Num())
 	{
 		CurrentBullet = NewObject<UBulletBase>(GetTransientPackage(), *AvailableBullets[SelectedBullets]);
+		if (MagazineComponent)
+		{
+		MagazineComponent->SelectedAmmoReserve = SelectedBullets;
+		}
 		Cast<AWeaponBase>(GetOwner())->ReloadWeapon();
 	}
-
 }
 

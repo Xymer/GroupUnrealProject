@@ -12,7 +12,7 @@ UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
 class GROUPUNREALPROJECT_API UMagazineComponent : public UActorComponent
 {
 	GENERATED_BODY()
-
+	
 public:	
 	int SelectedMagazine = 0;
 	
@@ -24,12 +24,14 @@ public:
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Ammo")
 		int CurrentMagazineAmmoCount;
-	// Make an Array
+
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Ammo")
-		int AmmoReserve = 120;
-	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Ammo")
-		int MaxAmmoReserve = 360;
-	//****
+		int SelectedAmmoReserve = 0;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Ammo")
+		TArray<int> CurrentAmmoReserve;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Ammo")
+		TArray<int> MaxAmmoReserve;
+	
 protected:
 	// Called when the game starts
 	virtual void BeginPlay() override;

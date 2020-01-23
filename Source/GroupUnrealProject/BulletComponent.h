@@ -13,6 +13,8 @@ class GROUPUNREALPROJECT_API UBulletComponent : public UActorComponent
 {
 	GENERATED_BODY()
 
+private:
+	class UMagazineComponent* MagazineComponent;
 public:	
 	int SelectedBullets = 0;
 	// Sets default values for this component's properties

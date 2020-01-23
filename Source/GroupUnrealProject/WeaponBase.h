@@ -65,13 +65,14 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Weapon Properties")
 		FVector MuzzlePoint;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Weapon Properties")
-		float GeneralDamage;
+		float DefaultDamage;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Weapon Properties")
+		int DefaultMagSize = 10;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Weapon Properties")
 		float ShootDelay = 0.05f;
 		float TempShootDelay = 0.05f;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Weapon Properties")
 		int BurstFireCount = 3;
-
 	UPROPERTY(EditAnywhere,BlueprintReadWrite, Category = "Reloading")
 		bool bIsReloading;
 

@@ -53,7 +53,10 @@ void AWeaponBase::Tick(float DeltaTime)
 		TempReloadTime -= DeltaTime;
 		if (TempReloadTime <= 0)
 		{
+			if (MagazineComponent)
+			{
 			MagazineComponent->CurrentMagazineAmmoCount = DeductFromAmmoReserve(MagazineComponent->CurrentMagazine->MagazineSize);
+			}
 			bIsReloading = false;
 		}
 	}
@@ -173,7 +176,7 @@ int AWeaponBase::DeductFromAmmoReserve(int Amount)
 	}
 	else
 	{
-		return 0;
+		return DefaultMagSize;
 	}
 }
 
@@ -193,7 +196,7 @@ void AWeaponBase::StartLineTrace(FVector CameraForwardVector)
 			}
 			else
 			{
-				Cast<IDamagableInterface>(HitResult.GetActor())->Execute_ApplyDamage(HitResult.GetActor(), GeneralDamage);
+				Cast<IDamagableInterface>(HitResult.GetActor())->Execute_ApplyDamage(HitResult.GetActor(), DefaultDamage);
 			}
 		}
 	}
