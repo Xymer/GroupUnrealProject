@@ -40,7 +40,7 @@ public:
 	float TempReloadTime;
 	bool bHasFired = false;
 	int CurrentBurst = 0;
-
+	//EFireMode CurrentFireMode;
 	class UHitScanComponent* HitScanComponent;
 	class UProjectileComponent* ProjectileComponent;
 	class UAudioComponent* AudioComponent;
@@ -48,7 +48,7 @@ public:
 	class UGameplayStatics* GameplayStaticComponent;
 	class UBulletComponent* BulletComponent;
 	class UMagazineComponent* MagazineComponent;
-	class UCameraComponent* CameraComponent;
+
 	/*Skeletal mesh need Muzzle bone*/
 	UPROPERTY(VisibleAnywhere, Category = "Mesh", meta = (Tooltip = "Your skeletal mesh need a Muzzle bone to function (It's case sensetive)"))
 		USkeletalMeshComponent* WeaponMesh ;

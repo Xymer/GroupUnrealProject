@@ -102,10 +102,7 @@ void AGroupUnrealProjectCharacter::OnBeginOverlap(UPrimitiveComponent* Overlappe
 			CurrentWeapon = Cast<AWeaponBase>(OtherActor);
 			CurrentWeapon->WeaponMesh->SetSimulatePhysics(false);
 			CurrentWeapon->WeaponMesh->SetCollisionProfileName("NoCollision");
-			if (!CurrentWeapon->CameraComponent)
-			{
-				CurrentWeapon->CameraComponent = this->FirstPersonCameraComponent;
-			}
+			
 			OtherActor->AttachToComponent(Mesh1P, FAttachmentTransformRules::SnapToTargetIncludingScale, "GripPoint");
 			OtherActor->SetActorTransform(Mesh1P->GetSocketTransform("GripPoint"));
 			CurrentWeapon->SetOwner(this);
@@ -121,10 +118,6 @@ void AGroupUnrealProjectCharacter::DropWeapon()
 		CurrentWeapon->DetachRootComponentFromParent(true);
 		CurrentWeapon->WeaponMesh->SetSimulatePhysics(true);
 		CurrentWeapon->WeaponMesh->SetCollisionProfileName("PhysicsActor");
-		if (CurrentWeapon->CameraComponent)
-		{
-			CurrentWeapon->CameraComponent = nullptr;
-		}
 		CurrentWeapon = nullptr;
 	}
 }
