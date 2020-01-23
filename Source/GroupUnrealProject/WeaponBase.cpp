@@ -53,7 +53,7 @@ void AWeaponBase::Tick(float DeltaTime)
 		TempReloadTime -= DeltaTime;
 		if (TempReloadTime <= 0)
 		{
-			CurrentMagazineAmmoCount = DeductFromAmmoReserve(CurrentMagazine->MagazineSize);
+			MagazineComponent->CurrentMagazineAmmoCount = DeductFromAmmoReserve(MagazineComponent->CurrentMagazine->MagazineSize);
 			bIsReloading = false;
 		}
 	}
@@ -61,7 +61,7 @@ void AWeaponBase::Tick(float DeltaTime)
 
 void AWeaponBase::ShootWeapon(FVector CameraForwardVector, bool bIsFiring)
 {
-	if (HitScanComponent && CurrentMagazineAmmoCount > 0 && !bIsReloading)
+	if (HitScanComponent && MagazineComponent && MagazineComponent->CurrentMagazineAmmoCount > 0 && !bIsReloading)
 	{
 		if (CurrentFireMode == SemiAutomatic && bIsFiring && !bHasFired)
 		{
@@ -72,13 +72,13 @@ void AWeaponBase::ShootWeapon(FVector CameraForwardVector, bool bIsFiring)
 
 		if (CurrentFireMode == BurstFire && !bHasFired)
 		{			
-			if (CurrentBurst < BurstFireCount && CurrentMagazineAmmoCount > 0)
+			if (CurrentBurst < BurstFireCount && MagazineComponent->CurrentMagazineAmmoCount > 0)
 			{
 				StartLineTrace(CameraForwardVector);
 				
 				CurrentBurst++;
 			}
-			else if (CurrentBurst > BurstFireCount || CurrentMagazineAmmoCount == 0)
+			else if (CurrentBurst > BurstFireCount || MagazineComponent->CurrentMagazineAmmoCount == 0)
 			{
 				bHasFired = true;
 			}
@@ -93,7 +93,7 @@ void AWeaponBase::ShootWeapon(FVector CameraForwardVector, bool bIsFiring)
 	{
 		
 	}
-	if (CurrentMagazineAmmoCount <= 0 && !bIsReloading)
+	if (MagazineComponent && MagazineComponent->CurrentMagazineAmmoCount <= 0 && !bIsReloading)
 	{
 		ReloadWeapon();
 	}
@@ -102,46 +102,25 @@ void AWeaponBase::ShootWeapon(FVector CameraForwardVector, bool bIsFiring)
 void AWeaponBase::ReloadWeapon()
 {
 	
-	if ( AmmoReserve != 0 && CurrentMagazineAmmoCount != CurrentMagazine->MagazineSize)
+	if (MagazineComponent)
 	{
-	bIsReloading = true;
-	TempReloadTime = CurrentMagazine->ReloadSpeed;
+	
+		MagazineComponent->ReloadMagazine();
+		
 	}
 }
 
 
 void AWeaponBase::SwitchMagazine()
 {
-	SelectedMagazine++;
-	if (SelectedMagazine > AvailableMagazines.Num())
-	{
-		SelectedMagazine = 0;
-		CurrentMagazine = NewObject<UMagazineBase>(GetTransientPackage(), *AvailableMagazines[SelectedMagazine]);
-		ReloadWeapon();
-	}
-
-	else if (SelectedMagazine < AvailableMagazines.Num())
-	{
-		CurrentMagazine = NewObject<UMagazineBase>(GetTransientPackage(), *AvailableMagazines[SelectedMagazine]);
-		ReloadWeapon();
-	}
-	
+	MagazineComponent->SwitchMagazine();
 }
 
 void AWeaponBase::SwitchBullets()
 {
-	SelectedBullets++;
-	if (SelectedBullets > AvailableBullets.Num() - 1)
+	if (BulletComponent)
 	{
-		SelectedBullets = 0;
-		CurrentBullet = NewObject<UBulletBase>(GetTransientPackage(), *AvailableBullets[SelectedBullets]);
-		ReloadWeapon();
-	}
-
-	else if (SelectedBullets < AvailableBullets.Num() - 1)
-	{
-		CurrentBullet = NewObject<UBulletBase>(GetTransientPackage(), *AvailableBullets[SelectedBullets]);
-		ReloadWeapon();
+		BulletComponent->SwitchBullet();
 	}
 	
 }
@@ -180,26 +159,21 @@ void AWeaponBase::SwitchFireMode()
 
 void AWeaponBase::AddToAmmoReserve(int Amount)
 {
-	AmmoReserve += Amount;
-	if (AmmoReserve >= MaxAmmoReserve)
+	if (MagazineComponent)
 	{
-		AmmoReserve = MaxAmmoReserve;
+		MagazineComponent->AddToAmmoReserve(Amount);
 	}
 }
 
 int AWeaponBase::DeductFromAmmoReserve(int Amount)
 {
-	int TempAmmoReserve;
-	if (CurrentMagazineAmmoCount + AmmoReserve < Amount)
-	{	
-			TempAmmoReserve = AmmoReserve;
-			AmmoReserve = 0;
-			return TempAmmoReserve + CurrentMagazineAmmoCount;	
+	if (MagazineComponent)
+	{
+		return MagazineComponent->DeductFromAmmoReserve(Amount);
 	}
 	else
 	{
-	AmmoReserve -= (Amount - CurrentMagazineAmmoCount);
-	return Amount;
+		return 0;
 	}
 }
 
@@ -213,10 +187,20 @@ void AWeaponBase::StartLineTrace(FVector CameraForwardVector)
 		UE_LOG(LogTemp, Warning, TEXT("Hit %s"), *HitResult.Actor->GetName());
 		if (Cast<IDamagableInterface>(HitResult.GetActor()))
 		{
-		Cast<IDamagableInterface>(HitResult.GetActor())->Execute_ApplyDamage(HitResult.GetActor(),CurrentBullet->BulletDamage);
+			if (BulletComponent)
+			{
+				Cast<IDamagableInterface>(HitResult.GetActor())->Execute_ApplyDamage(HitResult.GetActor(),BulletComponent->CurrentBullet->BulletDamage);
+			}
+			else
+			{
+				Cast<IDamagableInterface>(HitResult.GetActor())->Execute_ApplyDamage(HitResult.GetActor(), GeneralDamage);
+			}
 		}
 	}
-	CurrentMagazineAmmoCount--;
+	if (MagazineComponent)
+	{
+		MagazineComponent->DeductFromCurrentMagazineCount();
+	}
 }
 
 void AWeaponBase::PlayShootSound()
@@ -277,9 +261,23 @@ void AWeaponBase::InitializeWeaponBase()
 	{
 		CurrentSkin = Skin[0];
 	}
-	CurrentMagazine = NewObject<UMagazineBase>(GetTransientPackage(), *AvailableMagazines[SelectedMagazine]);
-	CurrentBullet = NewObject<UBulletBase>(GetTransientPackage(), *AvailableBullets[SelectedBullets]);
-	CurrentMagazineAmmoCount = CurrentMagazine->MagazineSize;
+	// Need to change when bullets and magazine are components
+	if (!MagazineComponent)
+	{
+		if (this->FindComponentByClass<UMagazineComponent>())
+		{
+			MagazineComponent = this->FindComponentByClass<UMagazineComponent>();
+			MagazineComponent->InitalizeMagazine();
+		}
+	}
+	if (!BulletComponent)
+	{
+		if (this->FindComponentByClass<UBulletComponent>())
+		{
+			BulletComponent = this->FindComponentByClass<UBulletComponent>();
+			BulletComponent->InitializeBullet();
+		}
+	}
 	CurrentFireMode = SemiAutomatic;
 	WeaponMesh->SetSimulatePhysics(true);
 	WeaponMesh->SetCollisionProfileName("PhysicsActor");

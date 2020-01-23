@@ -11,8 +11,8 @@
 
 
 #include "FireMode.h"
-#include "MagazineBase.h"
-#include "BulletBase.h"
+#include "MagazineComponent.h"
+#include "BulletComponent.h"
 #include "HitScanComponent.h"
 #include "ProjectileComponent.h"
 
@@ -28,17 +28,16 @@ class GROUPUNREALPROJECT_API AWeaponBase : public AActor
 
 	GENERATED_BODY()
 private:
-	int SelectedBullets = 0;
-	int SelectedMagazine = 0;
+	
 	int CurrentSelectedSkin = 0;
 	
 	FHitResult HitResult;
 	bool bShootDelayDone;
 	
 	bool bReloadTimeDone;
-	float TempReloadTime;
 public:
 
+	float TempReloadTime;
 	bool bHasFired = false;
 	int CurrentBurst = 0;
 	//EFireMode CurrentFireMode;
@@ -47,6 +46,8 @@ public:
 	class UAudioComponent* AudioComponent;
 	class UParticleSystemComponent* ParticleComponent;
 	class UGameplayStatics* GameplayStaticComponent;
+	class UBulletComponent* BulletComponent;
+	class UMagazineComponent* MagazineComponent;
 
 	/*Skeletal mesh need Muzzle bone*/
 	UPROPERTY(VisibleAnywhere, Category = "Mesh", meta = (Tooltip = "Your skeletal mesh need a Muzzle bone to function (It's case sensetive)"))
@@ -59,25 +60,12 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Skin")
 		UMaterialInterface* CurrentSkin;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Ammo")
-		TArray <TSubclassOf<UMagazineBase>> AvailableMagazines;
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Ammo")
-		TArray <TSubclassOf<UBulletBase>> AvailableBullets;
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Ammo")
-		UMagazineBase* CurrentMagazine;
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Ammo")
-		UBulletBase* CurrentBullet;
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Ammo")
-		int CurrentMagazineAmmoCount;
-	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Ammo")
-		int AmmoReserve = 120;
-	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Ammo")
-		int MaxAmmoReserve = 360;
-
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Weapon Properties")
 		TEnumAsByte<EFireMode> CurrentFireMode = EFireMode::SemiAutomatic;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Weapon Properties")
 		FVector MuzzlePoint;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Weapon Properties")
+		float GeneralDamage;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Weapon Properties")
 		float ShootDelay = 0.05f;
 		float TempShootDelay = 0.05f;
