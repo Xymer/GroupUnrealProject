@@ -107,9 +107,7 @@ void AWeaponBase::ReloadWeapon()
 	
 	if (MagazineComponent)
 	{
-	
 		MagazineComponent->ReloadMagazine();
-		
 	}
 }
 
@@ -125,7 +123,6 @@ void AWeaponBase::SwitchBullets()
 	{
 		BulletComponent->SwitchBullet();
 	}
-	
 }
 
 void AWeaponBase::SwitchSkin()
