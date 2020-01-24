@@ -39,7 +39,7 @@ void AWeaponBase::BeginPlay()
 void AWeaponBase::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
-	
+
 	TempShootDelay -= DeltaTime;
 	if (TempShootDelay <= 0)
 	{
@@ -51,13 +51,13 @@ void AWeaponBase::Tick(float DeltaTime)
 		bShootDelayDone = false;
 	}
 	if (bIsReloading)
-	{	
+	{
 		TempReloadTime -= DeltaTime;
 		if (TempReloadTime <= 0)
 		{
 			if (MagazineComponent)
 			{
-			MagazineComponent->CurrentMagazineAmmoCount = DeductFromAmmoReserve(MagazineComponent->CurrentMagazine->MagazineSize);
+				MagazineComponent->CurrentMagazineAmmoCount = DeductFromAmmoReserve(MagazineComponent->CurrentMagazine->MagazineSize);
 			}
 			bIsReloading = false;
 		}
@@ -71,16 +71,16 @@ void AWeaponBase::ShootWeapon(FVector CameraForwardVector, bool bIsFiring)
 		if (CurrentFireMode == SemiAutomatic && bIsFiring && !bHasFired)
 		{
 			StartLineTrace(CameraForwardVector);
-		
+
 			bHasFired = true;
 		}
 
 		if (CurrentFireMode == BurstFire && !bHasFired)
-		{			
+		{
 			if (CurrentBurst < BurstFireCount && MagazineComponent->CurrentMagazineAmmoCount > 0)
 			{
 				StartLineTrace(CameraForwardVector);
-				
+
 				CurrentBurst++;
 			}
 			else if (CurrentBurst > BurstFireCount || MagazineComponent->CurrentMagazineAmmoCount == 0)
@@ -88,15 +88,15 @@ void AWeaponBase::ShootWeapon(FVector CameraForwardVector, bool bIsFiring)
 				bHasFired = true;
 			}
 		}
-		if (CurrentFireMode == FullAuto  && bShootDelayDone)
+		if (CurrentFireMode == FullAuto && bShootDelayDone)
 		{
 			StartLineTrace(CameraForwardVector);
 		}
-		
-	}	
+
+	}
 	if (ProjectileComponent)
 	{
-		
+
 	}
 	if (MagazineComponent && MagazineComponent->CurrentMagazineAmmoCount <= 0 && !bIsReloading)
 	{
@@ -106,7 +106,7 @@ void AWeaponBase::ShootWeapon(FVector CameraForwardVector, bool bIsFiring)
 
 void AWeaponBase::ReloadWeapon()
 {
-	
+
 	if (MagazineComponent)
 	{
 		MagazineComponent->ReloadMagazine();
@@ -147,15 +147,15 @@ void AWeaponBase::SwitchFireMode()
 {
 	switch (CurrentFireMode)
 	{
-		case SemiAutomatic:
-			CurrentFireMode = BurstFire;
-			break;
-		case BurstFire:
-			CurrentFireMode = FullAuto;
-			break;
-		case FullAuto:
-			CurrentFireMode = SemiAutomatic;
-			break;
+	case SemiAutomatic:
+		CurrentFireMode = BurstFire;
+		break;
+	case BurstFire:
+		CurrentFireMode = FullAuto;
+		break;
+	case FullAuto:
+		CurrentFireMode = SemiAutomatic;
+		break;
 	}
 }
 
@@ -197,10 +197,15 @@ void AWeaponBase::ZoomOut()
 
 void AWeaponBase::OnPickupWeapon()
 {
-	if (!CameraComponent)
+	if (RecoilComponent)
 	{
-		CameraComponent = Cast<AGroupUnrealProjectCharacter>(this->GetOwner())->FirstPersonCameraComponent;
+		if (Cast<AGroupUnrealProjectCharacter>(this->GetOwner())->Controller->CastToPlayerController())
+		{
+			RecoilComponent->Controller = Cast<AGroupUnrealProjectCharacter>(this->GetOwner())->Controller->CastToPlayerController();
+		}
 	}
+
+
 	if (ZoomComponent)
 	{
 		ZoomComponent->CameraComponent = Cast<AGroupUnrealProjectCharacter>(this->GetOwner())->FirstPersonCameraComponent;
@@ -211,15 +216,19 @@ void AWeaponBase::OnPickupWeapon()
 
 void AWeaponBase::OnDropWeapon()
 {
-	
+
 	if (ZoomComponent)
 	{
-		ZoomComponent->ZoomOut();
-		ZoomComponent->CameraComponent = nullptr;
+		ZoomComponent->ZoomOutOnDropWeapon();
 	}
-	if (CameraComponent)
+
+	if (RecoilComponent)
 	{
-		CameraComponent = nullptr;
+		RecoilComponent->OnDropWeapon();
+	}
+	if (Controller)
+	{
+		Controller = nullptr;
 	}
 	this->SetOwner(nullptr);
 }
@@ -229,6 +238,10 @@ void AWeaponBase::StartLineTrace(FVector CameraForwardVector)
 	HitResult = HitScanComponent->LineTrace(WeaponMesh->GetSocketLocation("Muzzle"), CameraForwardVector);
 	PlayShootSound();
 	SpawnParticles();
+	if (RecoilComponent)
+	{
+		RecoilComponent->AddRecoil();
+	}
 	if (HitResult.GetActor())
 	{
 		UE_LOG(LogTemp, Warning, TEXT("Hit %s"), *HitResult.Actor->GetName());
@@ -236,7 +249,7 @@ void AWeaponBase::StartLineTrace(FVector CameraForwardVector)
 		{
 			if (BulletComponent)
 			{
-				Cast<IDamagableInterface>(HitResult.GetActor())->Execute_ApplyDamage(HitResult.GetActor(),BulletComponent->CurrentBullet->BulletDamage);
+				Cast<IDamagableInterface>(HitResult.GetActor())->Execute_ApplyDamage(HitResult.GetActor(), BulletComponent->CurrentBullet->BulletDamage);
 			}
 			else
 			{
@@ -254,7 +267,7 @@ void AWeaponBase::PlayShootSound()
 {
 	if (AudioComponent)
 	{
-	AudioComponent->Play();
+		AudioComponent->Play();
 	}
 }
 
@@ -262,7 +275,7 @@ void AWeaponBase::SpawnParticles()
 {
 	if (ParticleComponent)
 	{
-		ParticleComponent->SetActive(true,true);
+		ParticleComponent->SetActive(true, true);
 	}
 }
 
@@ -330,6 +343,13 @@ void AWeaponBase::InitializeWeaponBase()
 		if (this->FindComponentByClass<UZoomComponent>())
 		{
 			ZoomComponent = this->FindComponentByClass<UZoomComponent>();
+		}
+	}
+	if (!RecoilComponent)
+	{
+		if (this->FindComponentByClass<URecoilComponent>())
+		{
+			RecoilComponent = this->FindComponentByClass<URecoilComponent>();
 		}
 	}
 	CurrentFireMode = SemiAutomatic;

@@ -46,12 +46,10 @@ AGroupUnrealProjectCharacter::AGroupUnrealProjectCharacter()
 
 void AGroupUnrealProjectCharacter::BeginPlay()
 {
-	
 	// Call the base class  
 	Super::BeginPlay();
 	WeaponPickupBox->OnComponentBeginOverlap.AddDynamic(this, &AGroupUnrealProjectCharacter::OnBeginOverlap);
 	Mesh1P->SetHiddenInGame(false, true);
-	
 }
 
 
@@ -106,7 +104,6 @@ void AGroupUnrealProjectCharacter::OnBeginOverlap(UPrimitiveComponent* Overlappe
 			OtherActor->SetActorTransform(Mesh1P->GetSocketTransform("GripPoint"));
 			CurrentWeapon->SetOwner(this);
 			CurrentWeapon->OnPickupWeapon();
-
 		}
 	}
 }

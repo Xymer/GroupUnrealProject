@@ -16,6 +16,7 @@
 #include "HitScanComponent.h"
 #include "ProjectileComponent.h"
 #include "ZoomComponent.h"
+#include "RecoilComponent.h"
 
 #include "Templates\SubclassOf.h"
 #include "Particles/ParticleSystemComponent.h"
@@ -48,8 +49,10 @@ public:
 	class UGameplayStatics* GameplayStaticComponent;
 	class UBulletComponent* BulletComponent;
 	class UMagazineComponent* MagazineComponent;
-	class UCameraComponent* CameraComponent;
+	class APlayerController* Controller;
 	class UZoomComponent* ZoomComponent;
+	class URecoilComponent* RecoilComponent;
+
 	/*Skeletal mesh need Muzzle bone*/
 	UPROPERTY(VisibleAnywhere, Category = "Mesh", meta = (Tooltip = "Your skeletal mesh need a Muzzle bone to function (It's case sensetive)"))
 		USkeletalMeshComponent* WeaponMesh ;

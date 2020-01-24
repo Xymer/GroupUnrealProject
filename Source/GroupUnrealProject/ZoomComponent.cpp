@@ -43,8 +43,12 @@ void UZoomComponent::ZoomOut()
 	CameraComponent->SetFieldOfView(DefaultZoomValue);
 }
 
+/*
+* When dropping weapon zoom out to default value and CameraComponent to nullptr
+*/
 void UZoomComponent::ZoomOutOnDropWeapon()
 {
 	CameraComponent->SetFieldOfView(DefaultZoomValue);
+	CameraComponent = nullptr;
 }
 
