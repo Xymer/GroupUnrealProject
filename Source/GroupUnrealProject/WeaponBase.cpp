@@ -2,7 +2,6 @@
 
 
 #include "WeaponBase.h"
-#include "Components/BoxComponent.h"
 #include "DamagableInterface.h"
 #include "GroupUnrealProjectCharacter.h"
 #include "Camera/CameraComponent.h"
@@ -18,12 +17,6 @@ AWeaponBase::AWeaponBase()
 
 	WeaponMesh = CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("WeaponSkeleton"));
 	WeaponMesh->SetupAttachment(RootComponent);
-	
-	TriggerBox = CreateDefaultSubobject<UBoxComponent>(TEXT("TriggerBox"));
-	TriggerBox->SetupAttachment(RootComponent);
-	TriggerBox->InitBoxExtent(FVector(25.0f, 25.0f, 25.0f));
-	TriggerBox->SetCollisionProfileName(TEXT("Trigger"));
-	
 }
 
 
@@ -230,6 +223,7 @@ void AWeaponBase::ZoomOut()
 
 void AWeaponBase::OnPickupWeapon()
 {
+	CurrentFireMode = EFireMode::SemiAutomatic;
 	if (RecoilComponent)
 	{
 		if (Cast<AGroupUnrealProjectCharacter>(this->GetOwner())->Controller->CastToPlayerController())
@@ -237,7 +231,6 @@ void AWeaponBase::OnPickupWeapon()
 			RecoilComponent->Controller = Cast<AGroupUnrealProjectCharacter>(this->GetOwner())->Controller->CastToPlayerController();
 		}
 	}
-
 
 	if (ZoomComponent)
 	{
@@ -282,11 +275,11 @@ void AWeaponBase::StartLineTrace(FVector CameraForwardVector)
 		{
 			if (BulletComponent)
 			{
-				Cast<IDamagableInterface>(HitResult.GetActor())->Execute_ApplyDamage(HitResult.GetActor(), BulletComponent->CurrentBullet->BulletDamage);
+				Cast<IDamagableInterface>(HitResult.GetActor())->ApplyDamage_Implementation(BulletComponent->CurrentBullet->BulletDamage);
 			}
 			else
 			{
-				Cast<IDamagableInterface>(HitResult.GetActor())->Execute_ApplyDamage(HitResult.GetActor(), DefaultDamage);
+				Cast<IDamagableInterface>(HitResult.GetActor())->ApplyDamage_Implementation(DefaultDamage);
 			}
 		}
 	}

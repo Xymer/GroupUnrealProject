@@ -10,15 +10,23 @@ ARotatingMesh::ARotatingMesh()
 
 void ARotatingMesh::Tick(float DeltaSeconds)
 {
-	SetActorRotation(GetActorRotation() + RotationPerSecond * DeltaSeconds, ETeleportType::TeleportPhysics);
+	Super::Tick(DeltaSeconds);
 }
 
 float ARotatingMesh::ApplyDamage_Implementation(float InDamage)
 {
 	CurrentHealth -= InDamage;
+	SetLatestDamage(InDamage);
 	if (CurrentHealth <= 0.0f)
 	{
 		Destroy();
 	}
 	return CurrentHealth;
 }
+
+void ARotatingMesh::SetLatestDamage(float InDamage)
+{
+	LatestDamage = InDamage;
+}
+
+

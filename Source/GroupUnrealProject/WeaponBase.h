@@ -56,8 +56,6 @@ public:
 	/*Skeletal mesh need Muzzle bone*/
 	UPROPERTY(VisibleAnywhere, Category = "Mesh", meta = (Tooltip = "Your skeletal mesh need a Muzzle bone to function (It's case sensetive)"))
 		USkeletalMeshComponent* WeaponMesh ;
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Trigger")
-		class UBoxComponent* TriggerBox;
 	
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Skin")
 		TArray<UMaterialInterface*> Skin;
