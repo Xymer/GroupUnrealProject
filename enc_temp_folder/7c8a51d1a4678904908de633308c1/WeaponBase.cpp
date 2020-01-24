@@ -197,10 +197,7 @@ void AWeaponBase::ZoomOut()
 
 void AWeaponBase::OnPickupWeapon()
 {
-	if (!CameraComponent)
-	{
-		CameraComponent = Cast<AGroupUnrealProjectCharacter>(this->GetOwner())->FirstPersonCameraComponent;
-	}
+	
 	if (ZoomComponent)
 	{
 		ZoomComponent->CameraComponent = Cast<AGroupUnrealProjectCharacter>(this->GetOwner())->FirstPersonCameraComponent;
@@ -211,16 +208,12 @@ void AWeaponBase::OnPickupWeapon()
 
 void AWeaponBase::OnDropWeapon()
 {
-	
 	if (ZoomComponent)
 	{
 		ZoomComponent->ZoomOut();
 		ZoomComponent->CameraComponent = nullptr;
 	}
-	if (CameraComponent)
-	{
-		CameraComponent = nullptr;
-	}
+
 	this->SetOwner(nullptr);
 }
 
