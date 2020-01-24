@@ -18,12 +18,12 @@ AWeaponBase::AWeaponBase()
 
 	WeaponMesh = CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("WeaponSkeleton"));
 	WeaponMesh->SetupAttachment(RootComponent);
-
+	
 	TriggerBox = CreateDefaultSubobject<UBoxComponent>(TEXT("TriggerBox"));
 	TriggerBox->SetupAttachment(RootComponent);
 	TriggerBox->InitBoxExtent(FVector(25.0f, 25.0f, 25.0f));
 	TriggerBox->SetCollisionProfileName(TEXT("Trigger"));
-
+	
 }
 
 
@@ -33,6 +33,9 @@ void AWeaponBase::BeginPlay()
 {
 	Super::BeginPlay();
 	InitializeWeaponBase();
+	WeaponMesh->SetCollisionProfileName("PhysicsActor");
+	WeaponMesh->SetSimulatePhysics(true);
+	WeaponMesh->SetGenerateOverlapEvents(true);
 }
 
 // Called every frame
@@ -94,6 +97,33 @@ void AWeaponBase::ShootWeapon(FVector CameraForwardVector, bool bIsFiring)
 		}
 
 	}
+	else if (HitScanComponent && !MagazineComponent)
+	{
+		if (CurrentFireMode == SemiAutomatic && bIsFiring && !bHasFired)
+		{
+			StartLineTrace(CameraForwardVector);
+
+			bHasFired = true;
+		}
+
+		if (CurrentFireMode == BurstFire && !bHasFired)
+		{
+			if (CurrentBurst < BurstFireCount)
+			{
+				StartLineTrace(CameraForwardVector);
+
+				CurrentBurst++;
+			}
+			else if (CurrentBurst > BurstFireCount)
+			{
+				bHasFired = true;
+			}
+		}
+		if (CurrentFireMode == FullAuto && bShootDelayDone)
+		{
+			StartLineTrace(CameraForwardVector);
+		}
+	}
 	if (ProjectileComponent)
 	{
 
@@ -116,7 +146,10 @@ void AWeaponBase::ReloadWeapon()
 
 void AWeaponBase::SwitchMagazine()
 {
+	if (MagazineComponent)
+	{
 	MagazineComponent->SwitchMagazine();
+	}
 }
 
 void AWeaponBase::SwitchBullets()
@@ -353,8 +386,7 @@ void AWeaponBase::InitializeWeaponBase()
 		}
 	}
 	CurrentFireMode = SemiAutomatic;
-	WeaponMesh->SetSimulatePhysics(true);
-	WeaponMesh->SetCollisionProfileName("PhysicsActor");
+	
 }
 
 
