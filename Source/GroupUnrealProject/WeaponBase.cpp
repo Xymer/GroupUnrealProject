@@ -208,7 +208,7 @@ int AWeaponBase::DeductFromAmmoReserve(int Amount)
 	}
 	else
 	{
-		return DefaultMagSize;
+		return 0;
 	}
 }
 
