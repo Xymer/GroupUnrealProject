@@ -9,6 +9,7 @@
 #include "Runtime/Engine/Classes/Kismet/GameplayStatics.h"
 #include "Runtime/Engine/Classes/Kismet/KismetSystemLibrary.h"
 #include "DamagableInterface.h"
+#include "DrawDebugHelpers.h"
 #include "ProjectileImpactAction.h"
 
 // Sets default values
@@ -29,6 +30,7 @@ AProjectileImpactAction::AProjectileImpactAction()
 void AProjectileImpactAction::BeginPlay()
 {
 	Super::BeginPlay();
+	ActionRadiusCollider->SetSphereRadius(ExplsionsRadius);
 	UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), ActionParticleEffect, GetActorLocation());
 }
 
@@ -50,6 +52,7 @@ void AProjectileImpactAction::OnExplosionOverlap(UPrimitiveComponent* Overlapped
 			IDamagableInterface* tempActor = Cast<IDamagableInterface>(OtherActor);
 			tempActor->ApplyDamage_Implementation(ExplosionDamage);
 			GEngine->AddOnScreenDebugMessage(-1, 5, FColor::Red, "pew");
+			DrawDebugSphere(GetWorld(), this->GetOwner()->GetActorLocation(), ExplsionsRadius,12, FColor::Red, false, DebugTime);
 			Destroy();
 		}
 

@@ -31,6 +31,9 @@ public:
 		TSubclassOf<class AProjectileImpactAction> ActionThatHappensOnImpact;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Projectile Settings")
+		FName ProjectileName;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Projectile Settings")
 		float ProjectileSize;			//Base size of the projectile
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Projectile Settings")

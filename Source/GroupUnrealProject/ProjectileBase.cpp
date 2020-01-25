@@ -3,6 +3,7 @@
 
 #include "ProjectileBase.h"
 #include "DamagableInterface.h"
+
 #include "TimerManager.h"
 
 // Sets default values
@@ -33,6 +34,7 @@ void AProjectileBase::BeginPlay()
 {
 	Super::BeginPlay();
 	//The projectile movement values being overridden with the bases values
+	
 	ProjectileMovement->InitialSpeed = ProjectileSpeed;
 	ProjectileMovement->MaxSpeed = ProjectileSpeed;
 	ProjectileMovement->ProjectileGravityScale = ProjectileWeight;

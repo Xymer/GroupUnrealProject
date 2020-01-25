@@ -15,7 +15,7 @@ public:
 	// Sets default values for this actor's properties
 	AProjectileImpactAction();
 
-	UPROPERTY(EditAnywhere, Category = "Action Properties")
+	UPROPERTY(EditAnywhere,BlueprintReadWrite, Category = "Action Properties")
 		class USphereComponent* ActionRadiusCollider;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Action Properties")
 		float ExplsionsRadius;
@@ -25,6 +25,8 @@ public:
 		UParticleSystem* ActionParticleEffect;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Action Properties")
 		float ParticleSize;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Action Properties")
+		float DebugTime = 5.0f;
 
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;

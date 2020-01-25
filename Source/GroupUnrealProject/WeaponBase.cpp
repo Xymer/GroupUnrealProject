@@ -118,12 +118,6 @@ void AWeaponBase::ShootWeapon(FVector CameraForwardVector, bool bIsFiring)
 			StartLineTrace(CameraForwardVector);
 		}
 	}
-	if (ProjectileComponent)
-	{
-
-
-		
-	}	
 
 	if (ProjectileComponent && MagazineComponent && MagazineComponent->CurrentMagazineAmmoCount > 0 && !bIsReloading)
 	{
@@ -255,6 +249,10 @@ void AWeaponBase::ProjectileComponentPreparationFunction()
 {
 	PlayShootSound();
 	SpawnParticles();
+	if (RecoilComponent)
+	{
+		RecoilComponent->AddRecoil();
+	}
 	FActorSpawnParameters SpawnParams;
 	SpawnParams.Owner = this;
 	SpawnParams.Instigator = Instigator;
