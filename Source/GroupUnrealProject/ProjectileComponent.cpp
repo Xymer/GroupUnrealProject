@@ -18,11 +18,20 @@ UProjectileComponent::UProjectileComponent()
 void UProjectileComponent::BeginPlay()
 {
 	Super::BeginPlay();
+	ProjectileFireWeapon();
 
-	// ...
-	
 }
 
+
+void UProjectileComponent::ProjectileFireWeapon() {
+	AProjectileBase* Projectile = GetWorld()->SpawnActor<AProjectileBase>(WeaponProjectile, ProjectileStart, ProjectileRotation, WeaponSpawnParameter);
+
+	if (Projectile)
+	{
+		FVector const LaunchDirection = ProjectileRotation.Vector();
+		Projectile->FireInDirection(LaunchDirection);
+	}
+}
 
 // Called every frame
 void UProjectileComponent::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)

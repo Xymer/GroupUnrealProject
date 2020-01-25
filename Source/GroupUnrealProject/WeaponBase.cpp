@@ -112,6 +112,7 @@ void AWeaponBase::ShootWeapon(FVector CameraForwardVector, bool bIsFiring)
 				bHasFired = true;
 			}
 		}
+
 		if (CurrentFireMode == FullAuto && bShootDelayDone)
 		{
 			StartLineTrace(CameraForwardVector);
@@ -119,6 +120,35 @@ void AWeaponBase::ShootWeapon(FVector CameraForwardVector, bool bIsFiring)
 	}
 	if (ProjectileComponent)
 	{
+
+
+		
+	}	
+
+	if (ProjectileComponent && MagazineComponent && MagazineComponent->CurrentMagazineAmmoCount > 0 && !bIsReloading)
+	{
+		if (CurrentFireMode == SemiAutomatic && bIsFiring && !bHasFired)
+		{
+			ProjectileComponentPreparationFunction();
+			bHasFired = true;
+		}
+
+			if (CurrentFireMode == BurstFire && !bHasFired)
+			{
+				if (CurrentBurst < BurstFireCount && MagazineComponent->CurrentMagazineAmmoCount > 0)
+				{
+					ProjectileComponentPreparationFunction();
+					CurrentBurst++;
+				}
+				else if (CurrentBurst > BurstFireCount || MagazineComponent->CurrentMagazineAmmoCount == 0)
+				{
+					bHasFired = true;
+				}
+			}
+		if (CurrentFireMode == FullAuto && bShootDelayDone)
+		{
+			ProjectileComponentPreparationFunction();
+		}
 
 	}
 	if (MagazineComponent && MagazineComponent->CurrentMagazineAmmoCount <= 0 && !bIsReloading)
@@ -218,6 +248,23 @@ void AWeaponBase::ZoomOut()
 	if (ZoomComponent)
 	{
 		ZoomComponent->ZoomOut();
+	}
+}
+
+void AWeaponBase::ProjectileComponentPreparationFunction()
+{
+	PlayShootSound();
+	SpawnParticles();
+	FActorSpawnParameters SpawnParams;
+	SpawnParams.Owner = this;
+	SpawnParams.Instigator = Instigator;
+	ProjectileComponent->ProjectileStart = WeaponMesh->GetSocketLocation("Muzzle");
+	ProjectileComponent->ProjectileRotation = WeaponMesh->GetSocketRotation("Muzzle");
+	ProjectileComponent->WeaponSpawnParameter = SpawnParams;
+	ProjectileComponent->ProjectileFireWeapon();
+	if (MagazineComponent)
+	{
+		MagazineComponent->DeductFromCurrentMagazineCount();
 	}
 }
 

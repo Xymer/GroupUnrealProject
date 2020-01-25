@@ -113,6 +113,9 @@ public:
 	UFUNCTION(BlueprintCallable, BlueprintAuthorityOnly, Category = "Zoom")
 		void ZoomOut();
 
+	UFUNCTION()
+		void ProjectileComponentPreparationFunction();
+
 	void OnPickupWeapon();
 	void OnDropWeapon();
 private:
