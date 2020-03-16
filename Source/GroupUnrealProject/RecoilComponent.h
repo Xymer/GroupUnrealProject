@@ -16,23 +16,43 @@ class GROUPUNREALPROJECT_API URecoilComponent : public UActorComponent
 		
 		
 public:	
-	// Sets default values for this component's properties
 	class APlayerController* Controller;
+
 	URecoilComponent();
-	UPROPERTY(EditAnywhere,BlueprintReadWrite,Category = "Recoil")
-	float RecoilPitch = 1.0f;
+
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Recoil")
-	float RecoilYaw = 3.0f;
-	
+	float RecoilYaw = 1.0f;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Recoil")
+	float upRecoilTimer = 1.0f;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Recoil")
+	float downRecoilTimer = 1.0f;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Recoil")
+	float recoilDurationMultiplier = 4.0f;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Recoil")
+	float recoilPitchUpwardsPower = 0.15f;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Recoil")
+	float recoilPitchDownwardsPower = 0.15f;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Recoil")
+	float powerMultiplier = 2.0f;
+
 protected:
-	// Called when the game starts
 	virtual void BeginPlay() override;
 
+	bool hasFired = false;
+	float currentUpRecoilTimer = 0.0f;
+	float currentDownRecoilTimer = 0.0f;
+	float recoilDownwardTargetRotation;
+
 public:	
-	// Called every frame
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
 	void AddRecoil();
-	float RandomizeRecoil(float Value);
+	float RandomizeRecoilYaw(float Value);
 	void OnDropWeapon();
 		
 };
