@@ -39,6 +39,7 @@ private:
 public:
 
 	float TempReloadTime;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Has Fired")
 	bool bHasFired = false;
 	int CurrentBurst = 0;
 
@@ -86,7 +87,7 @@ protected:
 public:
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
-	UFUNCTION()
+	UFUNCTION(BlueprintCallable, BlueprintAuthorityOnly, Category = "Weapon Functions")
 		void ShootWeapon(FVector CameraForwardVector, bool bIsFiring);
 
 	UFUNCTION(BlueprintCallable,BlueprintAuthorityOnly, Category = "Weapon Functions")

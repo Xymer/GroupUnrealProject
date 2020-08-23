@@ -19,7 +19,7 @@ public:
 	UMagazineComponent();
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Magazine")
 		TArray <TSubclassOf<UMagazineBase>> AvailableMagazines;
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Magazine")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Magazine")
 		UMagazineBase* CurrentMagazine;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Ammo")

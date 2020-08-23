@@ -7,6 +7,7 @@
 #include "Camera/CameraComponent.h"
 #include <Components/SkeletalMeshComponent.h>
 #include <Engine/Engine.h>
+#include "Containers/UnrealString.h"
 
 // Sets default values
 AWeaponBase::AWeaponBase()
@@ -315,7 +316,6 @@ void AWeaponBase::StartLineTrace(FVector CameraForwardVector)
 	}
 	if (HitResult.GetActor())
 	{
-		UE_LOG(LogTemp, Warning, TEXT("Hit %s"), *HitResult.Actor->GetName());
 		if (Cast<IDamagableInterface>(HitResult.GetActor()))
 		{
 			if (BulletComponent)

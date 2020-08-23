@@ -49,7 +49,7 @@ void AGroupUnrealProjectCharacter::BeginPlay()
 	// Call the base class  
 	Super::BeginPlay();
 	WeaponPickupBox->OnComponentBeginOverlap.AddDynamic(this, &AGroupUnrealProjectCharacter::OnBeginOverlap);
-	Mesh1P->SetHiddenInGame(false, true);
+	//Mesh1P->SetHiddenInGame(false, true);
 }
 
 
@@ -97,15 +97,19 @@ void AGroupUnrealProjectCharacter::OnBeginOverlap(UPrimitiveComponent* Overlappe
 	{
 		if (OtherActor->Tags.Contains("Weapon") && !CurrentWeapon)
 		{
-			CurrentWeapon = Cast<AWeaponBase>(OtherActor);
-			CurrentWeapon->WeaponMesh->SetSimulatePhysics(false);
-			CurrentWeapon->WeaponMesh->SetCollisionProfileName("NoCollision");
-			OtherActor->AttachToComponent(Mesh1P, FAttachmentTransformRules::SnapToTargetIncludingScale, "GripPoint");
-			OtherActor->SetActorTransform(Mesh1P->GetSocketTransform("GripPoint"));
-			CurrentWeapon->SetOwner(this);
-			CurrentWeapon->OnPickupWeapon();
+			PickupWeapon(OtherActor);
 		}
 	}
+}
+
+void AGroupUnrealProjectCharacter::PickupWeapon(AActor* OtherActor) {
+	CurrentWeapon = Cast<AWeaponBase>(OtherActor);
+	CurrentWeapon->WeaponMesh->SetSimulatePhysics(false);
+	CurrentWeapon->WeaponMesh->SetCollisionProfileName("NoCollision");
+	OtherActor->AttachToComponent(Mesh1P, FAttachmentTransformRules::SnapToTargetIncludingScale, "GripPoint");
+	OtherActor->SetActorTransform(Mesh1P->GetSocketTransform("GripPoint"));
+	CurrentWeapon->SetOwner(this);
+	CurrentWeapon->OnPickupWeapon();
 }
 
 void AGroupUnrealProjectCharacter::DropWeapon()
@@ -192,7 +196,7 @@ void AGroupUnrealProjectCharacter::OnFire()
 	
 	if (CurrentWeapon && FiringAxisValue > 0)
 	{
-		 CurrentWeapon->ShootWeapon(FirstPersonCameraComponent->GetForwardVector() * Range,bIsFiring);
+		 CurrentWeapon->ShootWeapon(FirstPersonCameraComponent->GetForwardVector() * Range, bIsFiring);
 	}
 	if (CurrentWeapon && FiringAxisValue <= 0)
 	{

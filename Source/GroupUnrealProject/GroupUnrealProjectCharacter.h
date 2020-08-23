@@ -72,6 +72,11 @@ public:
 	UFUNCTION()
 		void OnBeginOverlap(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp,
 			int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
+
+	UFUNCTION(BlueprintCallable, BlueprintAuthorityOnly)
+		void PickupWeapon(AActor* OtherActor);
+		void PickupWeapon_Implementation();
+
 	UFUNCTION(BlueprintCallable, BlueprintAuthorityOnly)
 		void DropWeapon();
 		void DropWeapon_Implementation();
